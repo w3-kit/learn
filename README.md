@@ -1,5 +1,8 @@
 # w3-kit/learn
 
+[![CI](https://github.com/w3-kit/learn/actions/workflows/ci.yml/badge.svg)](https://github.com/w3-kit/learn/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
+
 Recipes, guides, and templates for web3 development. Learn by building.
 
 ## Recipes
