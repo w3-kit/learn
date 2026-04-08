@@ -52,6 +52,22 @@ Create a markdown file in the appropriate `guides/` subdirectory:
 
 Templates are starter project scaffolds in `templates/`. Each template should be a complete, runnable project.
 
+## Local development
+
+```bash
+git clone https://github.com/YOUR_USERNAME/learn.git
+cd learn
+npm install
+```
+
+### Run all CI checks locally
+
+```bash
+npm run format:check
+```
+
+No build step — this repo is content-only. The CI only checks markdown formatting.
+
 ## Guidelines
 
 - Keep code simple and well-commented — this is educational content
