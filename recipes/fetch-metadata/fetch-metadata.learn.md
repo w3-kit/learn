@@ -24,6 +24,7 @@ For logos and richer metadata, EVM relies on off-chain "token lists" — curated
 **Metaplex Token Metadata program** (optional): Stores name, symbol, and a `uri` pointing to a JSON file with the full metadata (image, description, attributes).
 
 The metadata lives in a PDA (Program Derived Address) derived from:
+
 ```
 seeds = ["metadata", METADATA_PROGRAM_ID, mint_address]
 ```

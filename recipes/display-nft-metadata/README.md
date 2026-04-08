@@ -8,19 +8,21 @@ Given a contract+tokenId (EVM) or mint address (Solana), fetches the on-chain me
 
 ## EVM vs Solana
 
-| | EVM | Solana |
-|---|---|---|
-| **Metadata pointer** | `tokenURI(tokenId)` on the contract | Metaplex metadata PDA account |
-| **On-chain data** | Just the URI (or base64 JSON) | Name, symbol, URI (and more) |
-| **URI resolution** | ipfs://, ar://, https://, data:... | ipfs://, ar://, https:// |
-| **Metadata standard** | ERC-721 Metadata JSON | Metaplex JSON standard |
+|                       | EVM                                 | Solana                        |
+| --------------------- | ----------------------------------- | ----------------------------- |
+| **Metadata pointer**  | `tokenURI(tokenId)` on the contract | Metaplex metadata PDA account |
+| **On-chain data**     | Just the URI (or base64 JSON)       | Name, symbol, URI (and more)  |
+| **URI resolution**    | ipfs://, ar://, https://, data:...  | ipfs://, ar://, https://      |
+| **Metadata standard** | ERC-721 Metadata JSON               | Metaplex JSON standard        |
 
 ## Key differences
 
 ### EVM: tokenURI is the single pointer
+
 The ERC-721 contract stores one URI per token. That URI points to a JSON file. Everything about the NFT (name, image, attributes) lives in that JSON. Some contracts store the entire JSON base64-encoded directly in the URI.
 
 ### Solana: Two-layer metadata
+
 Solana NFTs have on-chain metadata (name, symbol, URI stored in the Metaplex metadata account) plus off-chain metadata at the URI. The PDA is deterministic — given the mint address, you can always derive where the metadata account lives.
 
 ## Security notes

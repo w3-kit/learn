@@ -7,11 +7,11 @@ Validators earn block rewards and fees; delegators share in those rewards.
 
 ## Native vs liquid vs DeFi staking
 
-| Type | Example | Tradeoff |
-|---|---|---|
-| Native | SOL delegation, ETH solo validator | Full rewards, illiquid |
-| Liquid | stSOL (Marinade), stETH (Lido) | Tradeable LST, small fee |
-| DeFi | Synthetix SNX, Curve CRV | Token emissions, smart contract risk |
+| Type   | Example                            | Tradeoff                             |
+| ------ | ---------------------------------- | ------------------------------------ |
+| Native | SOL delegation, ETH solo validator | Full rewards, illiquid               |
+| Liquid | stSOL (Marinade), stETH (Lido)     | Tradeable LST, small fee             |
+| DeFi   | Synthetix SNX, Curve CRV           | Token emissions, smart contract risk |
 
 ## APY vs APR
 

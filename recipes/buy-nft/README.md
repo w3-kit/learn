@@ -8,12 +8,12 @@ Shows the fundamental mechanics behind NFT buying. Real marketplaces wrap these 
 
 ## EVM vs Solana
 
-| | EVM | Solana |
-|---|---|---|
-| **Core pattern** | `approve(buyer, tokenId)` → `transferFrom(seller, buyer, tokenId)` | `createTransferInstruction` from seller ATA to buyer ATA |
-| **Trustless buying** | Marketplace contract holds order, calls `transferFrom` atomically with payment | Marketplace program uses escrow account for atomic swap |
-| **Royalties** | EIP-2981 `royaltyInfo()` — enforced by marketplace (not the standard itself) | Metaplex `seller_fee_basis_points` — enforced by marketplace |
-| **Listing** | Off-chain order + on-chain approval | Off-chain order + on-chain escrow or approval |
+|                      | EVM                                                                            | Solana                                                       |
+| -------------------- | ------------------------------------------------------------------------------ | ------------------------------------------------------------ |
+| **Core pattern**     | `approve(buyer, tokenId)` → `transferFrom(seller, buyer, tokenId)`             | `createTransferInstruction` from seller ATA to buyer ATA     |
+| **Trustless buying** | Marketplace contract holds order, calls `transferFrom` atomically with payment | Marketplace program uses escrow account for atomic swap      |
+| **Royalties**        | EIP-2981 `royaltyInfo()` — enforced by marketplace (not the standard itself)   | Metaplex `seller_fee_basis_points` — enforced by marketplace |
+| **Listing**          | Off-chain order + on-chain approval                                            | Off-chain order + on-chain escrow or approval                |
 
 ## Key differences
 

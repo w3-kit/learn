@@ -8,12 +8,12 @@ Listens for new token transfers as they happen on-chain. Useful for building rea
 
 ## EVM vs Solana
 
-| | EVM | Solana |
-|---|---|---|
-| **Method** | `useWatchContractEvent` subscribes to ERC-20 `Transfer` events | `connection.onLogs` subscribes to program logs |
-| **Protocol** | WebSocket subscription to the RPC node | WebSocket subscription to the RPC node |
-| **Data** | Typed event args (from, to, value) | Raw program logs (need parsing) |
-| **Granularity** | Per-event, filtered by contract + event name | Per-transaction, filtered by account mention |
+|                 | EVM                                                            | Solana                                         |
+| --------------- | -------------------------------------------------------------- | ---------------------------------------------- |
+| **Method**      | `useWatchContractEvent` subscribes to ERC-20 `Transfer` events | `connection.onLogs` subscribes to program logs |
+| **Protocol**    | WebSocket subscription to the RPC node                         | WebSocket subscription to the RPC node         |
+| **Data**        | Typed event args (from, to, value)                             | Raw program logs (need parsing)                |
+| **Granularity** | Per-event, filtered by contract + event name                   | Per-transaction, filtered by account mention   |
 
 ## Key concept: Events vs Logs
 

@@ -68,6 +68,7 @@ function burn(uint256 amount) external {
 ```
 
 **Safe:**
+
 - Solidity ≥0.8 reverts on overflow/underflow by default — use it
 - For pre-0.8 contracts: use OpenZeppelin `SafeMath`
 - For post-0.8 code using `unchecked {}` blocks: manually verify the math cannot overflow before opting out of checks
@@ -131,10 +132,12 @@ pub struct Withdraw<'info> {
 **What it is:** Ethereum transactions sit in a public mempool before inclusion. MEV bots monitor pending transactions and insert their own transactions with higher gas fees to execute first.
 
 **Common attacks:**
+
 - **Sandwich attack:** Bot sees a large DEX swap → inserts a buy before it (price up) → swap executes at worse price → bot sells immediately after
 - **Transaction sniping:** Bot sees an NFT purchase at floor price and frontruns it
 
 **Prevention:**
+
 - Set slippage tolerance on swaps: `amountOutMin` in Uniswap, `minAmountOut` in your own code
 - Use commit-reveal schemes for auctions (submit a hash, reveal the value later)
 - Use private mempools: [Flashbots Protect](https://protect.flashbots.net/) routes transactions directly to validators, bypassing the public mempool
@@ -148,6 +151,7 @@ pub struct Withdraw<'info> {
 **Example attack:** Borrow $10M in DAI via flash loan → buy Token X on Uniswap, spiking its price → deposit Token X as collateral at the manipulated price → borrow $10M in stablecoins → swap back, crash the price → repay flash loan → profit from the undercollateralized loan.
 
 **Prevention:**
+
 - Use time-weighted average prices (TWAP) — Uniswap v3 TWAP, Chainlink price feeds, Pyth Network
 - Require prices to be older than a minimum age (e.g., reject Pyth prices older than 60 seconds)
 - Add circuit breakers: reject transactions if the price has moved more than X% from a reference
@@ -159,6 +163,7 @@ pub struct Withdraw<'info> {
 **What it is:** Flash loans allow anyone to borrow unlimited capital within a single transaction, as long as the full amount is repaid by the end of that transaction. They cost nothing to initiate and require no collateral. Combined with other vulnerabilities (especially oracle manipulation), they are the most common vector for large DeFi exploits.
 
 **Prevention:**
+
 - Never use spot prices from AMMs as oracles (see #5)
 - Use `nonReentrant` guards on all lending/borrowing functions
 - Check invariants at the end of every transaction: total collateral must remain above total debt
@@ -240,6 +245,7 @@ pub struct Update<'info> {
 ```
 
 If you are writing native (non-Anchor) Solana programs, manually check:
+
 ```rust
 require!(config_account.owner == program_id, ErrorCode::InvalidOwner);
 require!(config_data[..8] == CONFIG_DISCRIMINATOR, ErrorCode::InvalidDiscriminator);
@@ -303,6 +309,7 @@ The difference between `AccountInfo` (unchecked) and `Signer<'info>` (enforces s
 ```
 
 Additional patterns to avoid collisions:
+
 - For per-user, per-type records: `[b"order", user.key(), &order_id.to_le_bytes()]`
 - Never derive two conceptually different accounts from identical seeds, even if your current code only uses one of them — future code or other programs could exploit the ambiguity
 
@@ -311,15 +318,18 @@ Additional patterns to avoid collisions:
 ## Closing: tools and resources
 
 **Static analysis:**
+
 - [Slither](https://github.com/crytic/slither) — EVM static analyzer from Trail of Bits; catches reentrancy, access control, and arithmetic issues automatically
 - [Anchor's `anchor verify`](https://www.anchor-lang.com/docs/verifiable-builds) — verifiable builds for Solana programs
 - [Soteria](https://www.soteria.dev/) — Solana smart contract security scanner
 
 **Manual review checklists:**
+
 - [Trail of Bits EVM security checklist](https://github.com/crytic/building-secure-contracts)
 - [Neodyme Solana security workshop](https://workshop.neodyme.io/) — hands-on Solana vulnerability exercises
 - [Anchor security best practices](https://www.anchor-lang.com/docs/security)
 
 **Bug bounties and post-mortems:**
+
 - [Immunefi](https://immunefi.com/) — bug bounty platform; payouts up to $10M for critical DeFi vulnerabilities
 - [Rekt News](https://rekt.news/) — database of DeFi hacks with post-mortems

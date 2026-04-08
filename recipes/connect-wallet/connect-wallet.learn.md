@@ -5,6 +5,7 @@
 Wallet connection is web3's version of "log in." Instead of email + password, users prove who they are by connecting a wallet that holds their private key. No accounts to create, no passwords to remember — your wallet IS your identity.
 
 When a user "connects" their wallet to a dApp, they're granting the dApp permission to:
+
 - **See** their public address and token balances
 - **Request** transaction signatures (the user must approve each one)
 
@@ -29,6 +30,7 @@ Both EVM and Solana wallets work by injecting a "provider" object into the brows
 ## Why wagmi? Why wallet-adapter?
 
 You could call `window.ethereum.request(...)` directly, but you'd have to handle:
+
 - Multiple wallet detection
 - Connection state management
 - Chain switching

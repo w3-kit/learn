@@ -5,6 +5,7 @@
 An NFT (Non-Fungible Token) is a token where each unit is unique and not interchangeable. A fungible token (like ETH or USDC) is interchangeable — one ETH equals any other ETH. An NFT is different: token #1 is not the same as token #2, even in the same collection.
 
 The "non-fungible" property is enforced by the token standard:
+
 - **EVM:** ERC-721 gives each token a unique `tokenId` and tracks ownership with `ownerOf(tokenId)`
 - **Solana:** A mint account with 0 decimals and a max supply of 1 — physically impossible to have more than one
 
@@ -27,6 +28,7 @@ function ownerOf(uint256 tokenId) public view returns (address) {
 ```
 
 The ERC-721 standard (EIP-721) defines these required functions:
+
 - `balanceOf(address)` — how many NFTs does this address own?
 - `ownerOf(tokenId)` — who owns this specific token?
 - `transferFrom(from, to, tokenId)` — transfer ownership
@@ -83,7 +85,9 @@ Both EVM and Solana store NFT metadata off-chain (usually IPFS or Arweave) and r
     { "trait_type": "Eyes", "value": "Laser" }
   ],
   "properties": {
-    "files": [{ "uri": "https://arweave.net/xxx/image.png", "type": "image/png" }],
+    "files": [
+      { "uri": "https://arweave.net/xxx/image.png", "type": "image/png" }
+    ],
     "creators": [{ "address": "YourWallet...", "share": 100 }]
   }
 }
@@ -91,12 +95,12 @@ Both EVM and Solana store NFT metadata off-chain (usually IPFS or Arweave) and r
 
 ## IPFS vs Arweave
 
-| | IPFS | Arweave |
-|---|---|---|
-| **Cost** | Free to pin (via Pinata/NFT.storage); pay for persistence | One-time fee (~$0.01/MB) |
-| **Permanence** | Data can disappear if unpinned | Permanent by design |
-| **URI format** | `ipfs://QmHash...` | `ar://TxId...` or `https://arweave.net/TxId` |
-| **Speed** | Variable gateway speed | Fast via arweave.net |
+|                | IPFS                                                      | Arweave                                      |
+| -------------- | --------------------------------------------------------- | -------------------------------------------- |
+| **Cost**       | Free to pin (via Pinata/NFT.storage); pay for persistence | One-time fee (~$0.01/MB)                     |
+| **Permanence** | Data can disappear if unpinned                            | Permanent by design                          |
+| **URI format** | `ipfs://QmHash...`                                        | `ar://TxId...` or `https://arweave.net/TxId` |
+| **Speed**      | Variable gateway speed                                    | Fast via arweave.net                         |
 
 For production NFT collections, Arweave is preferred because the data is permanent. IPFS data can disappear if nobody pins it.
 
@@ -131,7 +135,7 @@ await setAuthority(
   mintPubkey,
   currentAuthority,
   AuthorityType.MintTokens,
-  null // ★ null = revoke
+  null, // ★ null = revoke
 );
 ```
 

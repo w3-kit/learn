@@ -42,6 +42,7 @@ recipes/your-recipe/
 ## Adding a guide
 
 Create a markdown file in the appropriate `guides/` subdirectory:
+
 - `guides/concepts/` — chain-agnostic concepts
 - `guides/evm/` — EVM-specific
 - `guides/solana/` — Solana-specific

@@ -8,13 +8,13 @@ Deploys a new token that you control. On EVM, this means deploying an ERC-20 sma
 
 ## EVM vs Solana — Fundamental difference
 
-| | EVM | Solana |
-|---|---|---|
-| **How** | Deploy a new smart contract | Create a mint account (no contract needed) |
-| **Language** | Write Solidity, compile to bytecode, deploy | Call `createMint` on the SPL Token program |
-| **Cost** | ~$5-50 on Ethereum, <$0.01 on L2s | ~0.002 SOL (~$0.30) |
-| **Customization** | Full control — your contract, your logic | Limited to SPL Token program features |
-| **Authority** | Controlled by contract logic (owner role, etc.) | Mint authority = who can mint more tokens |
+|                   | EVM                                             | Solana                                     |
+| ----------------- | ----------------------------------------------- | ------------------------------------------ |
+| **How**           | Deploy a new smart contract                     | Create a mint account (no contract needed) |
+| **Language**      | Write Solidity, compile to bytecode, deploy     | Call `createMint` on the SPL Token program |
+| **Cost**          | ~$5-50 on Ethereum, <$0.01 on L2s               | ~0.002 SOL (~$0.30)                        |
+| **Customization** | Full control — your contract, your logic        | Limited to SPL Token program features      |
+| **Authority**     | Controlled by contract logic (owner role, etc.) | Mint authority = who can mint more tokens  |
 
 ## Key concept: Contract deployment vs account creation
 

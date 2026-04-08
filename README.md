@@ -6,28 +6,28 @@ Recipes, guides, and templates for web3 development. Learn by building.
 
 Copy-paste code snippets for common web3 tasks. Each recipe has EVM and Solana implementations.
 
-| Recipe | Category |
-|--------|----------|
-| connect-wallet | Wallet |
-| disconnect-wallet | Wallet |
-| sign-message | Wallet |
-| switch-network | Wallet |
-| create-token | Tokens |
-| transfer-tokens | Tokens |
-| approve-spending | Tokens |
-| get-balance | Tokens |
-| fetch-metadata | Tokens |
-| watch-transfers | Tokens |
-| mint-nft | NFTs |
-| fetch-nft-collection | NFTs |
-| buy-nft | NFTs |
-| display-nft-metadata | NFTs |
-| swap-tokens | DeFi |
-| provide-liquidity | DeFi |
-| stake-tokens | DeFi |
-| claim-rewards | DeFi |
-| resolve-address | Utils |
-| estimate-fees | Utils |
+| Recipe               | Category |
+| -------------------- | -------- |
+| connect-wallet       | Wallet   |
+| disconnect-wallet    | Wallet   |
+| sign-message         | Wallet   |
+| switch-network       | Wallet   |
+| create-token         | Tokens   |
+| transfer-tokens      | Tokens   |
+| approve-spending     | Tokens   |
+| get-balance          | Tokens   |
+| fetch-metadata       | Tokens   |
+| watch-transfers      | Tokens   |
+| mint-nft             | NFTs     |
+| fetch-nft-collection | NFTs     |
+| buy-nft              | NFTs     |
+| display-nft-metadata | NFTs     |
+| swap-tokens          | DeFi     |
+| provide-liquidity    | DeFi     |
+| stake-tokens         | DeFi     |
+| claim-rewards        | DeFi     |
+| resolve-address      | Utils    |
+| estimate-fees        | Utils    |
 
 ## Guides
 

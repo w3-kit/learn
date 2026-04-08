@@ -18,6 +18,7 @@ ENS uses a two-contract system:
 2. **Resolver** — stores the actual records (address, avatar, text records, etc.)
 
 viem's `getEnsAddress` does this automatically:
+
 ```
 client.getEnsAddress({ name: "vitalik.eth" })
   → fetches Registry to find the Resolver contract
@@ -50,6 +51,7 @@ viem's `getEnsName` does all of this in one call.
 ### CCIP-Read and L2 names
 
 ENS supports **CCIP-Read** (EIP-3668), which lets resolvers fetch data from off-chain sources. This enables:
+
 - `.eth` names resolving to L2 addresses (e.g., a name that points to an Optimism address)
 - Custom TLDs (e.g., `.cb.id` from Coinbase Wallet)
 - Names stored on L2s with L1 as the trust anchor
@@ -70,7 +72,7 @@ seeds = [hashed_name, ROOT_DOMAIN_ACCOUNT, parent_account_pubkey]
 
 `getDomainKey("bonfida")` computes this PDA and returns it. Then `NameRegistryState.retrieve` reads the account data at that address to get the owner's public key.
 
-Because the PDA is deterministic, anyone can compute where a name lives without querying a registry contract — the address *is* the registry entry.
+Because the PDA is deterministic, anyone can compute where a name lives without querying a registry contract — the address _is_ the registry entry.
 
 ### How reverse lookup works
 

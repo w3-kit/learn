@@ -12,6 +12,7 @@ function. Calling `claim()` (or `harvest()`, `getReward()` — name varies)
 transfers the accrued tokens to your wallet.
 
 Common patterns:
+
 - `claim()` — claim without touching principal.
 - `exit()` — unstake principal + claim rewards in one call.
 - `compound()` — auto-restake rewards (if the contract supports it).
@@ -29,12 +30,12 @@ the exchange rate of the LST token — no explicit claim required.
 
 ## Comparison table
 
-| Aspect | EVM | Solana native |
-|---|---|---|
-| Claim action | `claim()` tx | deactivate + withdraw |
-| Timing | Immediate (depends on protocol) | ~1 epoch cooldown |
-| Reward token | Protocol-defined ERC-20 | SOL (embedded in balance) |
-| Auto-compound | Some protocols support it | Not native; use LST protocols |
+| Aspect        | EVM                             | Solana native                 |
+| ------------- | ------------------------------- | ----------------------------- |
+| Claim action  | `claim()` tx                    | deactivate + withdraw         |
+| Timing        | Immediate (depends on protocol) | ~1 epoch cooldown             |
+| Reward token  | Protocol-defined ERC-20         | SOL (embedded in balance)     |
+| Auto-compound | Some protocols support it       | Not native; use LST protocols |
 
 ## Security notes
 

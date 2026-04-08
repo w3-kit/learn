@@ -51,14 +51,14 @@ Every ERC-20 token is a single contract. All user balances live inside that cont
 
 Solana has one type: **account**. Everything is an account — your wallet, a token balance, a deployed program, the program's data, a PDA. The field layout is always the same:
 
-| Field | Type | Description |
-|---|---|---|
-| `pubkey` | 32 bytes | The account's address (ed25519 public key or PDA) |
-| `lamports` | u64 | SOL balance in lamports (1 SOL = 1,000,000,000 lamports) |
-| `data` | `Vec<u8>` | Arbitrary bytes — program-defined structure |
-| `owner` | 32 bytes | The program that controls this account |
-| `executable` | bool | If true, the account contains a BPF program |
-| `rent_epoch` | u64 | Legacy field (rent is now handled via rent-exemption) |
+| Field        | Type      | Description                                              |
+| ------------ | --------- | -------------------------------------------------------- |
+| `pubkey`     | 32 bytes  | The account's address (ed25519 public key or PDA)        |
+| `lamports`   | u64       | SOL balance in lamports (1 SOL = 1,000,000,000 lamports) |
+| `data`       | `Vec<u8>` | Arbitrary bytes — program-defined structure              |
+| `owner`      | 32 bytes  | The program that controls this account                   |
+| `executable` | bool      | If true, the account contains a BPF program              |
+| `rent_epoch` | u64       | Legacy field (rent is now handled via rent-exemption)    |
 
 ### Key insight: programs are stateless
 
@@ -81,17 +81,17 @@ Accounts that store data must maintain a minimum lamport balance proportional to
 
 ## Side-by-side comparison
 
-| Dimension | EVM | Solana |
-|---|---|---|
-| Account types | EOA and contract | One type — account |
-| State location | Inside contract storage trie | Separate accounts owned by program |
-| Address size | 20 bytes (`0x` + 40 hex) | 32 bytes (ed25519 pubkey or off-curve PDA) |
-| Key algorithm | secp256k1 | Ed25519 |
-| Fee for state | Gas (SSTORE = 20,000 gas) | Rent-exempt deposit in lamports |
-| Token balances | Mapping inside ERC-20 contract | Dedicated token account per user per mint |
-| Program upgrades | Proxy patterns (UUPS, transparent) | Native via `BPFLoaderUpgradeable` |
-| Execution | Sequential within a block | Parallel (Sealevel — non-overlapping account sets) |
-| Programs callable by | Transaction or other contracts | Transaction or other programs (CPIs) |
+| Dimension            | EVM                                | Solana                                             |
+| -------------------- | ---------------------------------- | -------------------------------------------------- |
+| Account types        | EOA and contract                   | One type — account                                 |
+| State location       | Inside contract storage trie       | Separate accounts owned by program                 |
+| Address size         | 20 bytes (`0x` + 40 hex)           | 32 bytes (ed25519 pubkey or off-curve PDA)         |
+| Key algorithm        | secp256k1                          | Ed25519                                            |
+| Fee for state        | Gas (SSTORE = 20,000 gas)          | Rent-exempt deposit in lamports                    |
+| Token balances       | Mapping inside ERC-20 contract     | Dedicated token account per user per mint          |
+| Program upgrades     | Proxy patterns (UUPS, transparent) | Native via `BPFLoaderUpgradeable`                  |
+| Execution            | Sequential within a block          | Parallel (Sealevel — non-overlapping account sets) |
+| Programs callable by | Transaction or other contracts     | Transaction or other programs (CPIs)               |
 
 ---
 

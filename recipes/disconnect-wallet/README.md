@@ -8,10 +8,10 @@ Ends the connection between the user's wallet and your dApp. Clears the session 
 
 ## EVM vs Solana
 
-| | EVM | Solana |
-|---|---|---|
-| **Method** | `useDisconnect()` from wagmi | `useWallet().disconnect()` |
-| **What it clears** | Wallet connector state, cached accounts | Wallet adapter state, event listeners |
+|                              | EVM                                      | Solana                                        |
+| ---------------------------- | ---------------------------------------- | --------------------------------------------- |
+| **Method**                   | `useDisconnect()` from wagmi             | `useWallet().disconnect()`                    |
+| **What it clears**           | Wallet connector state, cached accounts  | Wallet adapter state, event listeners         |
 | **Persists across reloads?** | wagmi clears localStorage connector info | wallet-adapter respects `autoConnect` setting |
 
 ## When to disconnect

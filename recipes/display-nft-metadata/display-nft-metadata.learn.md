@@ -57,21 +57,15 @@ Metaplex defines a similar schema with some additions:
   "seller_fee_basis_points": 500,
   "image": "https://arweave.net/.../42.png",
   "external_url": "https://coolnfts.xyz",
-  "attributes": [
-    { "trait_type": "Background", "value": "Blue" }
-  ],
+  "attributes": [{ "trait_type": "Background", "value": "Blue" }],
   "collection": {
     "name": "Cool NFTs",
     "family": "Cool"
   },
   "properties": {
-    "files": [
-      { "uri": "https://arweave.net/.../42.png", "type": "image/png" }
-    ],
+    "files": [{ "uri": "https://arweave.net/.../42.png", "type": "image/png" }],
     "category": "image",
-    "creators": [
-      { "address": "CreatorPublicKey...", "share": 100 }
-    ]
+    "creators": [{ "address": "CreatorPublicKey...", "share": 100 }]
   }
 }
 ```
@@ -85,11 +79,11 @@ The Metaplex metadata account address is deterministically derived:
 ```ts
 const [metadataPDA] = PublicKey.findProgramAddressSync(
   [
-    Buffer.from("metadata"),      // seed 1: literal "metadata"
+    Buffer.from("metadata"), // seed 1: literal "metadata"
     METADATA_PROGRAM_ID.toBuffer(), // seed 2: Metaplex program ID
-    mintPublicKey.toBuffer(),      // seed 3: the NFT's mint address
+    mintPublicKey.toBuffer(), // seed 3: the NFT's mint address
   ],
-  METADATA_PROGRAM_ID
+  METADATA_PROGRAM_ID,
 );
 ```
 
@@ -123,6 +117,7 @@ const resolved = uri.replace("ipfs://", "https://ipfs.io/ipfs/");
 ```
 
 Multiple gateways exist — use a reliable one or self-host:
+
 - `https://ipfs.io/ipfs/`
 - `https://cloudflare-ipfs.com/ipfs/`
 - `https://gateway.pinata.cloud/ipfs/`
@@ -165,11 +160,11 @@ Metadata is immutable (for reputable collections) — cache aggressively. A one-
 
 ## On-chain vs off-chain metadata
 
-| | Fully on-chain | Off-chain (IPFS/Arweave) | Off-chain (HTTP) |
-|---|---|---|---|
-| **Permanence** | Permanent | Permanent (Arweave) / fragile (IPFS) | Fragile — server can go down |
-| **Mutability** | Immutable once set | Immutable (content-addressed) | Can change anytime |
-| **Cost** | Very high | Low (store URI only) | Low |
-| **Examples** | Nouns, Autoglyphs | Most serious collections | Early/low-budget projects |
+|                | Fully on-chain     | Off-chain (IPFS/Arweave)             | Off-chain (HTTP)             |
+| -------------- | ------------------ | ------------------------------------ | ---------------------------- |
+| **Permanence** | Permanent          | Permanent (Arweave) / fragile (IPFS) | Fragile — server can go down |
+| **Mutability** | Immutable once set | Immutable (content-addressed)        | Can change anytime           |
+| **Cost**       | Very high          | Low (store URI only)                 | Low                          |
+| **Examples**   | Nouns, Autoglyphs  | Most serious collections             | Early/low-budget projects    |
 
 "Rug" risk for metadata: if an NFT project uses HTTP URIs and their server goes down, the metadata disappears. IPFS with pinning and Arweave are the safer choices.

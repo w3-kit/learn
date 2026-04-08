@@ -72,6 +72,7 @@ priority cost = computeUnitPrice (µlamports per CU) × computeUnits / 1,000,000
 `getRecentPrioritizationFees` returns the compute unit price from recent blocks for a given set of writable accounts. Using the writable accounts of your specific transaction gives a more accurate estimate than the global fee market — a DEX might have higher priority fees than a simple transfer.
 
 **Percentile strategy:**
+
 - 50th percentile (median) — balanced. Good for non-urgent transactions.
 - 75th percentile — faster inclusion during normal congestion.
 - 90th percentile — near-guaranteed inclusion. Use for time-sensitive ops.
@@ -83,12 +84,14 @@ Solana's scheduler processes transactions in parallel, but transactions that wri
 ## Displaying fees: practical guidelines
 
 ### EVM
+
 1. Show gas price in gwei (human-readable unit, 1 gwei = 10⁻⁹ ETH)
 2. Show total cost in ETH with 6 decimal places
 3. Show USD equivalent using a live price feed
 4. Add a "slow / standard / fast" selector that maps to different priority fee levels
 
 ### Solana
+
 1. Base fee is always ~0.000005 SOL — worth showing but not alarming
 2. Priority fee is the variable part — show it separately
 3. "Total" is what users care about; break it down in an expandable section
