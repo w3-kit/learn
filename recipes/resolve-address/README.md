@@ -11,15 +11,15 @@ Name services let users share `vitalik.eth` or `bonfida.sol` instead of a 42- or
 
 ## EVM vs Solana
 
-| | EVM (ENS) | Solana (SNS) |
-|---|---|---|
-| **Registry** | Ethereum Name Service (ENS) | Solana Name Service (@bonfida/spl-name-service) |
-| **TLD** | `.eth` (plus others via CCIP-Read) | `.sol` |
-| **Chain requirement** | Mainnet only (L1) | Mainnet only |
-| **Forward lookup** | `getEnsAddress({ name })` via viem | `getDomainKey` + `NameRegistryState.retrieve` |
-| **Reverse lookup** | `getEnsName({ address })` via viem | `performReverseLookup` |
-| **Fallback display** | Truncate: `0x1234…abcd` | Truncate: `AbCd…XyZ1` |
-| **Resolution cost** | Free read (RPC call) | Free read (RPC call) |
+|                       | EVM (ENS)                          | Solana (SNS)                                    |
+| --------------------- | ---------------------------------- | ----------------------------------------------- |
+| **Registry**          | Ethereum Name Service (ENS)        | Solana Name Service (@bonfida/spl-name-service) |
+| **TLD**               | `.eth` (plus others via CCIP-Read) | `.sol`                                          |
+| **Chain requirement** | Mainnet only (L1)                  | Mainnet only                                    |
+| **Forward lookup**    | `getEnsAddress({ name })` via viem | `getDomainKey` + `NameRegistryState.retrieve`   |
+| **Reverse lookup**    | `getEnsName({ address })` via viem | `performReverseLookup`                          |
+| **Fallback display**  | Truncate: `0x1234…abcd`            | Truncate: `AbCd…XyZ1`                           |
+| **Resolution cost**   | Free read (RPC call)               | Free read (RPC call)                            |
 
 ## API surface
 

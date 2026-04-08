@@ -5,7 +5,7 @@
 Traditional exchanges match buyers with sellers. AMMs replace the order book with
 a **liquidity pool** — a smart contract holding reserves of two tokens.
 
-### The constant product formula: x * y = k
+### The constant product formula: x \* y = k
 
 - `x` = reserve of token A
 - `y` = reserve of token B
@@ -37,12 +37,14 @@ the best price and minimize price impact. They do NOT hold your funds.
 **MEV (Maximal Extractable Value)**: validators/searchers profit by reordering transactions.
 
 **Sandwich attack**:
+
 1. Attacker sees your swap in the mempool
 2. Attacker buys token B first (drives price up)
 3. Your swap executes at the worse price
 4. Attacker sells token B for profit
 
 **Mitigations**:
+
 - Use private RPC / MEV-protected endpoints
 - Set tight slippage tolerance
 - Use commit-reveal schemes or batched swaps

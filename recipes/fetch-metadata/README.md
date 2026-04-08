@@ -8,12 +8,12 @@ Reads on-chain metadata for any token. On EVM, this means calling view functions
 
 ## EVM vs Solana
 
-| | EVM | Solana |
-|---|---|---|
-| **Name/Symbol** | Stored in the ERC-20 contract (`name()`, `symbol()`) | Stored in Metaplex Token Metadata PDA |
-| **Decimals** | `decimals()` on the contract | `getMint()` returns decimals |
-| **Supply** | `totalSupply()` on the contract | `getMint()` returns supply |
-| **Image/URI** | Not standard in ERC-20 (use token lists or ERC-721 tokenURI) | Metaplex metadata includes `uri` pointing to JSON with image |
+|                 | EVM                                                          | Solana                                                       |
+| --------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| **Name/Symbol** | Stored in the ERC-20 contract (`name()`, `symbol()`)         | Stored in Metaplex Token Metadata PDA                        |
+| **Decimals**    | `decimals()` on the contract                                 | `getMint()` returns decimals                                 |
+| **Supply**      | `totalSupply()` on the contract                              | `getMint()` returns supply                                   |
+| **Image/URI**   | Not standard in ERC-20 (use token lists or ERC-721 tokenURI) | Metaplex metadata includes `uri` pointing to JSON with image |
 
 ## Key concept: On-chain vs off-chain metadata
 

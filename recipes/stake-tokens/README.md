@@ -6,6 +6,7 @@ delegating SOL to a validator (Solana).
 ## What is staking?
 
 You lock up tokens with a protocol or network. In return you receive:
+
 - **Native staking rewards** (from the network's inflation/block rewards).
 - **DeFi staking rewards** (from protocol fees or token emissions).
 
@@ -28,12 +29,12 @@ an LST token immediately without waiting for epoch activation.
 
 ## EVM vs Solana comparison
 
-| Aspect | EVM | Solana |
-|---|---|---|
-| Asset | Any ERC-20 | Native SOL |
-| Lock period | Protocol-defined | ~1 epoch (~2 days) |
-| Reward token | Protocol token or same token | Inflation SOL |
-| Slashing | Protocol-dependent | Validator misbehaviour |
+| Aspect       | EVM                          | Solana                 |
+| ------------ | ---------------------------- | ---------------------- |
+| Asset        | Any ERC-20                   | Native SOL             |
+| Lock period  | Protocol-defined             | ~1 epoch (~2 days)     |
+| Reward token | Protocol token or same token | Inflation SOL          |
+| Slashing     | Protocol-dependent           | Validator misbehaviour |
 
 ## Security notes
 

@@ -8,14 +8,14 @@ Gas is the unit of computational work on EVM-compatible blockchains. It is not E
 
 Every operation the EVM executes costs a fixed number of gas units:
 
-| Opcode | Gas cost | What it does |
-|---|---|---|
-| `ADD` | 3 | Integer addition |
-| `MUL` | 5 | Integer multiplication |
-| `SLOAD` | 2,100 | Read a storage slot (cold) |
-| `SSTORE` | 20,000 | Write to a new storage slot |
-| `CALL` | 2,600 | Call another contract (cold) |
-| Base tx cost | 21,000 | Minimum cost for any transaction |
+| Opcode       | Gas cost | What it does                     |
+| ------------ | -------- | -------------------------------- |
+| `ADD`        | 3        | Integer addition                 |
+| `MUL`        | 5        | Integer multiplication           |
+| `SLOAD`      | 2,100    | Read a storage slot (cold)       |
+| `SSTORE`     | 20,000   | Write to a new storage slot      |
+| `CALL`       | 2,600    | Call another contract (cold)     |
+| Base tx cost | 21,000   | Minimum cost for any transaction |
 
 A simple ETH transfer costs exactly 21,000 gas. A complex DeFi swap might cost 150,000–300,000 gas. A gas unit has no monetary value by itself — the fee depends on the current gas price.
 
@@ -77,8 +77,8 @@ const gas = await client.estimateGas({
 });
 
 console.log({
-  baseFee: fees.baseFeePerGas,         // bigint (wei)
-  maxFee: fees.maxFeePerGas,           // baseFee * 2 + priorityFee (viem default)
+  baseFee: fees.baseFeePerGas, // bigint (wei)
+  maxFee: fees.maxFeePerGas, // baseFee * 2 + priorityFee (viem default)
   priorityFee: fees.maxPriorityFeePerGas,
   gasUnits: gas,
   estimatedCostWei: fees.maxFeePerGas * gas,
@@ -91,8 +91,8 @@ console.log({
 const hash = await walletClient.sendTransaction({
   to: "0xRecipient",
   value: parseEther("0.01"),
-  maxFeePerGas: parseGwei("20"),          // your hard cap
-  maxPriorityFeePerGas: parseGwei("1"),   // validator tip
+  maxFeePerGas: parseGwei("20"), // your hard cap
+  maxPriorityFeePerGas: parseGwei("1"), // validator tip
   gas: 21000n,
 });
 ```
@@ -122,15 +122,19 @@ The protocol sets a per-block gas limit (~30 million gas on Ethereum mainnet). T
 Layer 2 networks use gas too, but the cost structure has two components:
 
 **Optimistic Rollups (Optimism, Arbitrum, Base):**
+
 ```
 total fee = L2 execution fee + L1 data fee
 ```
+
 The L1 data fee covers posting your transaction's calldata to Ethereum mainnet as a blob. Compressing calldata reduces this fee significantly.
 
 **ZK Rollups (zkSync, Starknet, Polygon zkEVM):**
+
 ```
 total fee = L2 execution fee + proof amortization cost
 ```
+
 The proof cost is shared across all transactions in a batch. In practice, L2 fees are 10–100x cheaper than mainnet.
 
 ---

@@ -66,6 +66,6 @@ import nacl from "tweetnacl";
 const isValid = nacl.sign.detached.verify(
   new TextEncoder().encode("Hello from w3-kit!"),
   signature,
-  publicKey.toBytes()
+  publicKey.toBytes(),
 );
 ```

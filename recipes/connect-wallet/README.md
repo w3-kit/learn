@@ -8,12 +8,12 @@ Detects installed wallets, lets the user pick one, and establishes a connection.
 
 ## EVM vs Solana
 
-| | EVM | Solana |
-|---|---|---|
-| **Library** | wagmi + viem | @solana/wallet-adapter-react |
-| **Discovery** | EIP-6963 auto-detects all installed wallets | Wallet Standard API |
-| **Key wallet** | MetaMask | Phantom |
-| **Address format** | `0x` + 40 hex chars | Base58 string |
+|                      | EVM                                         | Solana                                |
+| -------------------- | ------------------------------------------- | ------------------------------------- |
+| **Library**          | wagmi + viem                                | @solana/wallet-adapter-react          |
+| **Discovery**        | EIP-6963 auto-detects all installed wallets | Wallet Standard API                   |
+| **Key wallet**       | MetaMask                                    | Phantom                               |
+| **Address format**   | `0x` + 40 hex chars                         | Base58 string                         |
 | **Connection scope** | Grants access to all accounts in the wallet | Grants access to the selected account |
 
 ## Security notes

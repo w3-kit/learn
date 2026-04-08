@@ -16,6 +16,7 @@ Protocols like Synthetix, Curve, and Convex accumulate rewards every block.
 ## Auto-compounding
 
 Some protocols (e.g. Beefy, Yearn) auto-compound rewards on your behalf by:
+
 1. Claiming rewards periodically.
 2. Swapping reward tokens back to the staked asset.
 3. Re-staking — increasing your principal.
@@ -26,6 +27,7 @@ This converts APR into effective APY. Cost: a small protocol fee (typically
 ## Manual compounding
 
 If the protocol doesn't auto-compound, you can manually:
+
 1. Claim rewards.
 2. Swap reward token → staking token (see `swap-tokens` recipe).
 3. Stake again (see `stake-tokens` recipe).
@@ -36,6 +38,7 @@ high-fee networks (Ethereum mainnet).
 ## Tax considerations
 
 In many jurisdictions:
+
 - Staking rewards are taxed as **income** at the time of receipt (fair market
   value when earned).
 - Selling the reward token is a **capital gains** event.

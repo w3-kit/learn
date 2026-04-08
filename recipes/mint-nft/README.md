@@ -8,20 +8,22 @@ Creates a new non-fungible token and assigns it to a recipient wallet. On EVM, t
 
 ## EVM vs Solana
 
-| | EVM | Solana |
-|---|---|---|
-| **Standard** | ERC-721 (`safeMint`) | SPL Token (0 decimals, supply 1) |
-| **Metadata** | `tokenURI` → off-chain JSON | Metaplex PDA → off-chain JSON |
+|                      | EVM                                    | Solana                                    |
+| -------------------- | -------------------------------------- | ----------------------------------------- |
+| **Standard**         | ERC-721 (`safeMint`)                   | SPL Token (0 decimals, supply 1)          |
+| **Metadata**         | `tokenURI` → off-chain JSON            | Metaplex PDA → off-chain JSON             |
 | **Contract needed?** | Yes — deploy an ERC-721 contract first | No — mint account is created at mint time |
-| **Who pays?** | Caller pays gas | Caller pays rent (~0.002 SOL) + fees |
-| **Signers** | Connected wallet | Wallet + new mint keypair |
+| **Who pays?**        | Caller pays gas                        | Caller pays rent (~0.002 SOL) + fees      |
+| **Signers**          | Connected wallet                       | Wallet + new mint keypair                 |
 
 ## Key differences
 
 ### EVM: Deploy first, then mint
+
 You must first deploy an ERC-721 contract (or use an existing one). The contract tracks ownership in a mapping. Only the contract owner (or an authorized minter role) can call `safeMint`.
 
 ### Solana: The mint IS the NFT
+
 Each NFT is a new SPL mint account with 0 decimals and a max supply of 1. There's no central contract — the mint account itself is the NFT identity. The Metaplex metadata program attaches name/image/attributes via a separate PDA account.
 
 ## Security notes

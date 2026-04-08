@@ -36,10 +36,10 @@ On Solana, ALL tokens use the same program (SPL Token). Creating a token means:
 ```typescript
 const mint = await createMint(
   connection,
-  payer,         // Who pays for the account
+  payer, // Who pays for the account
   mintAuthority, // Who can mint new tokens
   freezeAuthority, // Who can freeze accounts (or null)
-  decimals,      // Token precision
+  decimals, // Token precision
 );
 ```
 

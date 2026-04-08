@@ -51,10 +51,12 @@ For production apps, use WebSocket for the real-time feed with polling as a fall
 ## Performance considerations
 
 Popular tokens (USDC, USDT, WETH) generate enormous volumes of events:
+
 - USDC on Ethereum: ~1,000+ transfers per block (~12 seconds)
 - USDC on Solana: thousands of transactions per second
 
 For high-volume tokens:
+
 - Filter server-side when possible (indexed params on EVM)
 - Buffer and batch UI updates (don't re-render per event)
 - Consider using an indexer (The Graph, Helius) instead of raw RPC subscriptions

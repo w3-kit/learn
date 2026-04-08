@@ -15,13 +15,13 @@ Asks the user's wallet to sign a text message with their private key. This prove
 
 ## EVM vs Solana
 
-| | EVM | Solana |
-|---|---|---|
-| **Method** | `useSignMessage` (EIP-191 personal sign) | `useWallet().signMessage()` |
-| **Input** | String message | Uint8Array (raw bytes) |
-| **Output** | Hex signature string | Uint8Array signature |
-| **Standard** | EIP-191 wraps message with `\x19Ethereum Signed Message:\n` prefix | Signs raw bytes directly |
-| **Verification** | `verifyMessage` from viem | `nacl.sign.detached.verify` or `@solana/web3.js` |
+|                  | EVM                                                                | Solana                                           |
+| ---------------- | ------------------------------------------------------------------ | ------------------------------------------------ |
+| **Method**       | `useSignMessage` (EIP-191 personal sign)                           | `useWallet().signMessage()`                      |
+| **Input**        | String message                                                     | Uint8Array (raw bytes)                           |
+| **Output**       | Hex signature string                                               | Uint8Array signature                             |
+| **Standard**     | EIP-191 wraps message with `\x19Ethereum Signed Message:\n` prefix | Signs raw bytes directly                         |
+| **Verification** | `verifyMessage` from viem                                          | `nacl.sign.detached.verify` or `@solana/web3.js` |
 
 ## Security notes
 

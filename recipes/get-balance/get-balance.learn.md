@@ -49,6 +49,7 @@ Display:  1.000000 USDC (formatted with 6 decimals)
 ```
 
 Every token defines its own decimal precision:
+
 - ETH: 18 decimals → 1 ETH = 10^18 wei
 - SOL: 9 decimals → 1 SOL = 10^9 lamports
 - USDC: 6 decimals on both EVM and Solana

@@ -30,7 +30,7 @@ cheaper token and less of the more expensive one.
 It becomes permanent when you withdraw while prices are still diverged.
 
 | Price change (one token) | Approximate IL |
-|--------------------------|----------------|
+| ------------------------ | -------------- |
 | 1.25x                    | 0.6%           |
 | 1.5x                     | 2.0%           |
 | 2x                       | 5.7%           |
@@ -46,6 +46,7 @@ requires active management — if price leaves the range, you earn no fees.
 ## Fee Tiers
 
 Pools come in different fee tiers (e.g., 0.01%, 0.05%, 0.3%, 1%).
+
 - Stable pairs (USDC/USDT): use low fee tiers (0.01–0.05%)
 - Blue-chip volatile pairs (ETH/USDC): 0.3% is most liquid
 - Exotic pairs: 1% compensates LPs for higher IL risk
@@ -54,6 +55,6 @@ Pools come in different fee tiers (e.g., 0.01%, 0.05%, 0.3%, 1%).
 
 - **TVL**: Total Value Locked — total dollar value of assets in a pool
 - **APR/APY**: Annualized fee return for LPs (varies by volume and pool size)
-- **Rebalancing**: The AMM automatically adjusting reserves to maintain k = x*y
+- **Rebalancing**: The AMM automatically adjusting reserves to maintain k = x\*y
 - **PDA**: Program Derived Address (Solana) — deterministic address for pool state
 - **Tick**: Discrete price point used in concentrated liquidity (V3-style) AMMs

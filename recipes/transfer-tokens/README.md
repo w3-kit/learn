@@ -8,20 +8,22 @@ Creates and sends a transaction that moves tokens from the connected wallet to a
 
 ## EVM vs Solana
 
-| | EVM | Solana |
-|---|---|---|
-| **Native transfer** | `useSendTransaction` with value in wei | `SystemProgram.transfer` with lamports |
-| **Token transfer** | Call `transfer(to, amount)` on the ERC-20 contract | `createTransferInstruction` on SPL Token program |
-| **Recipient setup** | No setup needed — any address can receive ERC-20 | Recipient needs an Associated Token Account (ATA) |
-| **Gas/fees** | Sender pays gas (variable, depends on network congestion) | Sender pays ~0.000005 SOL per transaction + rent if creating ATA |
-| **Confirmation** | Wait for transaction receipt | `confirmTransaction` with commitment level |
+|                     | EVM                                                       | Solana                                                           |
+| ------------------- | --------------------------------------------------------- | ---------------------------------------------------------------- |
+| **Native transfer** | `useSendTransaction` with value in wei                    | `SystemProgram.transfer` with lamports                           |
+| **Token transfer**  | Call `transfer(to, amount)` on the ERC-20 contract        | `createTransferInstruction` on SPL Token program                 |
+| **Recipient setup** | No setup needed — any address can receive ERC-20          | Recipient needs an Associated Token Account (ATA)                |
+| **Gas/fees**        | Sender pays gas (variable, depends on network congestion) | Sender pays ~0.000005 SOL per transaction + rent if creating ATA |
+| **Confirmation**    | Wait for transaction receipt                              | `confirmTransaction` with commitment level                       |
 
 ## Key differences
 
 ### EVM: Just call `transfer()`
+
 On EVM, you call the `transfer` function on the token contract. If the recipient address exists, the transfer works. Simple.
 
 ### Solana: Check for the recipient's token account
+
 On Solana, you can't send tokens to an address that doesn't have a token account for that specific mint. You may need to create the Associated Token Account (ATA) first, which costs ~0.002 SOL in rent.
 
 ## Security notes

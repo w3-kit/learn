@@ -10,12 +10,12 @@ Switch between blockchain networks/clusters.
 
 ## EVM vs Solana — Fundamental difference
 
-| | EVM | Solana |
-|---|---|---|
-| **Concept** | Multiple independent chains (Ethereum, Arbitrum, Base, Polygon) each with their own chain ID | One chain with multiple clusters (mainnet-beta, devnet, testnet) |
-| **Switching** | Wallet-level: `useSwitchChain()` asks the wallet to change chains | App-level: change the RPC endpoint in your ConnectionProvider |
-| **User action** | Wallet popup asks user to approve the switch | No wallet interaction needed |
-| **State impact** | Address stays the same, balances/tokens change | Address stays the same, balances/tokens change |
+|                  | EVM                                                                                          | Solana                                                           |
+| ---------------- | -------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| **Concept**      | Multiple independent chains (Ethereum, Arbitrum, Base, Polygon) each with their own chain ID | One chain with multiple clusters (mainnet-beta, devnet, testnet) |
+| **Switching**    | Wallet-level: `useSwitchChain()` asks the wallet to change chains                            | App-level: change the RPC endpoint in your ConnectionProvider    |
+| **User action**  | Wallet popup asks user to approve the switch                                                 | No wallet interaction needed                                     |
+| **State impact** | Address stays the same, balances/tokens change                                               | Address stays the same, balances/tokens change                   |
 
 ## Security notes
 

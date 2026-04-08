@@ -11,14 +11,14 @@ Shows users what a transaction will cost before they sign. Covers the full fee m
 
 ## EVM vs Solana fee model
 
-| | EVM (EIP-1559) | Solana |
-|---|---|---|
-| **Unit** | Gas units | Compute units (CU) |
-| **Base fee** | Variable — set by the protocol, burned | Fixed — 5000 lamports per signature |
-| **Priority fee** | Optional tip to validator (max priority fee) | Optional compute unit price (µLamports per CU) |
-| **Total cost** | `gasUnits × (baseFee + priorityFee)` | `5000 × signatures + priorityFee` |
-| **Estimation** | `estimateGas` + `estimateFeesPerGas` | `getFeeForMessage` + `getRecentPrioritizationFees` |
-| **L2 note** | L2s add an L1 data fee (Optimism, Arbitrum) | N/A |
+|                  | EVM (EIP-1559)                               | Solana                                             |
+| ---------------- | -------------------------------------------- | -------------------------------------------------- |
+| **Unit**         | Gas units                                    | Compute units (CU)                                 |
+| **Base fee**     | Variable — set by the protocol, burned       | Fixed — 5000 lamports per signature                |
+| **Priority fee** | Optional tip to validator (max priority fee) | Optional compute unit price (µLamports per CU)     |
+| **Total cost**   | `gasUnits × (baseFee + priorityFee)`         | `5000 × signatures + priorityFee`                  |
+| **Estimation**   | `estimateGas` + `estimateFeesPerGas`         | `getFeeForMessage` + `getRecentPrioritizationFees` |
+| **L2 note**      | L2s add an L1 data fee (Optimism, Arbitrum)  | N/A                                                |
 
 ## API surface
 
@@ -54,7 +54,7 @@ Show the fee in the chain's native token and in USD (requires a price feed). For
 - **EVM:** show in gwei for the per-unit cost, ETH for the total. Hide sub-gwei precision.
 - **Solana:** show in SOL. Most transactions cost < 0.00001 SOL — use scientific notation or a "< $0.001" label.
 
-Always show the fee *before* the confirmation step. Hiding fees until after signing erodes trust.
+Always show the fee _before_ the confirmation step. Hiding fees until after signing erodes trust.
 
 ## EVM: EIP-1559 explained
 
@@ -64,6 +64,7 @@ Since the London upgrade (EIP-1559), Ethereum uses a two-component fee:
 2. **Priority fee (tip)** — paid directly to the validator as an incentive to include the transaction.
 
 Users set `maxFeePerGas` (ceiling) and `maxPriorityFeePerGas` (tip). Actual cost:
+
 ```
 actual = min(baseFee + tip, maxFee) × gasUnits
 ```

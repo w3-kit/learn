@@ -12,13 +12,13 @@ withdraw your share of the pool (plus accumulated fees).
 
 ## EVM vs Solana
 
-| Aspect              | EVM                                         | Solana                                        |
-|---------------------|---------------------------------------------|-----------------------------------------------|
-| Approval            | `approve` each token before deposit         | Not required — ATA ownership enforced         |
-| Return value        | LP token minted to your address             | LP token ATA credited                         |
-| Minimum amounts     | `amountAMin`, `amountBMin` in call          | `minLpTokens` in instruction data             |
-| Pool discovery      | Factory contract → `getPair(tokenA, tokenB)`| Program-derived addresses (PDAs)              |
-| Removing liquidity  | `removeLiquidity` with LP token amount      | Withdraw instruction with LP token burn       |
+| Aspect             | EVM                                          | Solana                                  |
+| ------------------ | -------------------------------------------- | --------------------------------------- |
+| Approval           | `approve` each token before deposit          | Not required — ATA ownership enforced   |
+| Return value       | LP token minted to your address              | LP token ATA credited                   |
+| Minimum amounts    | `amountAMin`, `amountBMin` in call           | `minLpTokens` in instruction data       |
+| Pool discovery     | Factory contract → `getPair(tokenA, tokenB)` | Program-derived addresses (PDAs)        |
+| Removing liquidity | `removeLiquidity` with LP token amount       | Withdraw instruction with LP token burn |
 
 ## Security notes
 

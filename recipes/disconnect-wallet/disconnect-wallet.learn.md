@@ -5,6 +5,7 @@
 Disconnecting a wallet is more than UI cleanup — it's a security boundary.
 
 While a wallet is connected, the dApp can:
+
 - Read the user's address and balances at any time
 - Pop up signature requests
 - Track which chain the user is on
@@ -16,6 +17,7 @@ Disconnecting revokes these capabilities. For privacy-conscious users, this matt
 ### On EVM (wagmi)
 
 `disconnect()` from wagmi:
+
 1. Calls the connector's `disconnect()` method
 2. Clears wagmi's internal store (address, chain, connector reference)
 3. Removes the persisted connection from localStorage (so `reconnectOnMount` won't auto-reconnect)
@@ -26,6 +28,7 @@ The wallet extension (e.g., MetaMask) is also notified and may remove the dApp f
 ### On Solana (wallet-adapter)
 
 `disconnect()` from `useWallet()`:
+
 1. Calls the selected wallet adapter's `disconnect()` method
 2. Clears the adapter state (publicKey, connected flag)
 3. Removes event listeners

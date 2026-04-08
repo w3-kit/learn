@@ -8,13 +8,13 @@ Fetches the balance of the native currency (ETH/SOL) and any token (ERC-20/SPL) 
 
 ## EVM vs Solana
 
-| | EVM | Solana |
-|---|---|---|
-| **Native balance** | `useBalance` (wagmi) or `getBalance` (viem) | `connection.getBalance()` returns lamports |
-| **Token balance** | Call `balanceOf(address)` on the ERC-20 contract | Read the Associated Token Account (ATA) |
-| **Decimals** | Stored in the token contract (`decimals()`) | Stored in the mint account |
-| **Units** | Wei (ETH = 10^18 wei), varies per token | Lamports (SOL = 10^9 lamports), varies per token |
-| **Zero balance** | Returns 0 | Token account may not exist at all |
+|                    | EVM                                              | Solana                                           |
+| ------------------ | ------------------------------------------------ | ------------------------------------------------ |
+| **Native balance** | `useBalance` (wagmi) or `getBalance` (viem)      | `connection.getBalance()` returns lamports       |
+| **Token balance**  | Call `balanceOf(address)` on the ERC-20 contract | Read the Associated Token Account (ATA)          |
+| **Decimals**       | Stored in the token contract (`decimals()`)      | Stored in the mint account                       |
+| **Units**          | Wei (ETH = 10^18 wei), varies per token          | Lamports (SOL = 10^9 lamports), varies per token |
+| **Zero balance**   | Returns 0                                        | Token account may not exist at all               |
 
 ## Key concept: Decimals
 

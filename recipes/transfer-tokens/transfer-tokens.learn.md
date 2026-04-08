@@ -52,6 +52,7 @@ This is why Solana token transfers are slightly more complex — you may need to
 ## Transaction lifecycle
 
 ### EVM
+
 1. Build the transaction (to, value, data)
 2. Wallet signs it
 3. Transaction broadcast to the network
@@ -59,6 +60,7 @@ This is why Solana token transfers are slightly more complex — you may need to
 5. Wait for the transaction receipt (confirmation)
 
 ### Solana
+
 1. Build the transaction (instructions, recent blockhash)
 2. Wallet signs it
 3. Transaction sent to a validator

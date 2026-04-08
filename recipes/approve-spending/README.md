@@ -10,16 +10,17 @@ On Solana, the equivalent is "delegation" — authorizing another account to tra
 
 ## EVM vs Solana
 
-| | EVM | Solana |
-|---|---|---|
-| **Approve** | `approve(spender, amount)` on the ERC-20 contract | `createApproveInstruction` on SPL Token program |
-| **Check** | `allowance(owner, spender)` | Read the token account's `delegate` and `delegatedAmount` fields |
-| **Revoke** | `approve(spender, 0)` | `createRevokeInstruction` |
-| **Unlimited approval** | `approve(spender, type(uint256).max)` — common but risky | Not supported — delegation has a fixed amount |
+|                        | EVM                                                      | Solana                                                           |
+| ---------------------- | -------------------------------------------------------- | ---------------------------------------------------------------- |
+| **Approve**            | `approve(spender, amount)` on the ERC-20 contract        | `createApproveInstruction` on SPL Token program                  |
+| **Check**              | `allowance(owner, spender)`                              | Read the token account's `delegate` and `delegatedAmount` fields |
+| **Revoke**             | `approve(spender, 0)`                                    | `createRevokeInstruction`                                        |
+| **Unlimited approval** | `approve(spender, type(uint256).max)` — common but risky | Not supported — delegation has a fixed amount                    |
 
 ## Why approvals exist
 
 Blockchain contracts can't pull tokens from your wallet without permission. The approve-then-spend pattern lets you:
+
 1. Approve a DEX to spend 100 USDC
 2. The DEX calls `transferFrom` to take exactly the amount needed for your swap
 

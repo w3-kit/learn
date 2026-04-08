@@ -5,18 +5,18 @@ Execute token swaps on EVM chains and Solana using generic AMM router interfaces
 ## What swaps do
 
 A swap exchanges one token for another via an on-chain liquidity pool.
-Instead of matching buyers and sellers, AMMs use a pricing formula (e.g., x*y=k)
+Instead of matching buyers and sellers, AMMs use a pricing formula (e.g., x\*y=k)
 to price trades automatically.
 
 ## EVM vs Solana
 
-| Aspect         | EVM                                      | Solana                                    |
-|----------------|------------------------------------------|-------------------------------------------|
-| Approval step  | Required (`approve` before swap)         | Not required — ATA ownership is sufficient|
-| Router pattern | Single contract call with path array     | Program instruction with custom layout    |
-| Slippage param | `amountOutMin` in the call               | `minAmountOut` in instruction data        |
-| Token accounts | One address per token                    | Associated Token Accounts (ATAs) per pair |
-| Gas / fees     | Gas in ETH/native token                  | Fixed lamport fee (~0.000005 SOL)         |
+| Aspect         | EVM                                  | Solana                                     |
+| -------------- | ------------------------------------ | ------------------------------------------ |
+| Approval step  | Required (`approve` before swap)     | Not required — ATA ownership is sufficient |
+| Router pattern | Single contract call with path array | Program instruction with custom layout     |
+| Slippage param | `amountOutMin` in the call           | `minAmountOut` in instruction data         |
+| Token accounts | One address per token                | Associated Token Accounts (ATAs) per pair  |
+| Gas / fees     | Gas in ETH/native token              | Fixed lamport fee (~0.000005 SOL)          |
 
 ## Security notes
 

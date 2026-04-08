@@ -9,6 +9,7 @@ A Program Derived Address (PDA) is one of Solana's most important primitives. It
 Solana programs are stateless — they store no data internally. All state lives in accounts. But here is the problem: to create or modify an account, someone must sign the transaction. Wallets sign with a private key. Programs have no private key.
 
 Without PDAs, you could not build:
+
 - A token vault owned by a program (who would sign to move tokens out?)
 - A per-user profile account derived deterministically (how would you find it without storing a mapping?)
 - An escrow that releases funds automatically on-chain (who controls the escrow address?)
@@ -32,6 +33,7 @@ PDA = findProgramAddress(seeds, programId)
 ```
 
 **Seeds** are an array of byte slices — arbitrary data you choose to make the address unique and meaningful. Common seeds:
+
 - String literals: `b"profile"`, `b"vault"`
 - Public keys: `user.key().as_ref()`, `mint.key().as_ref()`
 - Numbers: `&order_id.to_le_bytes()`
@@ -46,7 +48,7 @@ const userPublicKey = new PublicKey("UserWallet...");
 
 const [profilePda, bump] = PublicKey.findProgramAddressSync(
   [Buffer.from("profile"), userPublicKey.toBuffer()],
-  programId
+  programId,
 );
 
 console.log("PDA:", profilePda.toBase58());
@@ -146,13 +148,13 @@ Anchor's `init` constraint creates the account, transfers the rent-exempt deposi
 
 ## Common PDA patterns
 
-| Pattern | Seeds | Use case |
-|---|---|---|
-| User profile | `[b"profile", user_pubkey]` | Per-user state, one account per wallet |
-| Token vault | `[b"vault", mint_pubkey]` | Escrow tokens on behalf of users |
-| Global config | `[b"config"]` | Singleton state for the whole program |
-| Order book entry | `[b"order", user_pubkey, &order_id.to_le_bytes()]` | Per-user indexed records |
-| Whitelist entry | `[b"whitelist", user_pubkey]` | Membership proof — account existence = membership |
+| Pattern          | Seeds                                              | Use case                                          |
+| ---------------- | -------------------------------------------------- | ------------------------------------------------- |
+| User profile     | `[b"profile", user_pubkey]`                        | Per-user state, one account per wallet            |
+| Token vault      | `[b"vault", mint_pubkey]`                          | Escrow tokens on behalf of users                  |
+| Global config    | `[b"config"]`                                      | Singleton state for the whole program             |
+| Order book entry | `[b"order", user_pubkey, &order_id.to_le_bytes()]` | Per-user indexed records                          |
+| Whitelist entry  | `[b"whitelist", user_pubkey]`                      | Membership proof — account existence = membership |
 
 ---
 
@@ -167,7 +169,7 @@ const program = new Program(idl, provider);
 
 const [profilePda] = PublicKey.findProgramAddressSync(
   [Buffer.from("profile"), provider.wallet.publicKey.toBuffer()],
-  program.programId
+  program.programId,
 );
 
 const tx = await program.methods
@@ -205,6 +207,7 @@ If two different semantic meanings can produce the same PDA, an attacker can tri
 ```
 
 Additional rules:
+
 - Include a unique index for per-user records if users can create multiple: `[b"order", user.key(), &order_id.to_le_bytes()]`
 - Never use user-controlled data as the only seed — a user could craft seeds that collide with a privileged account
 - Anchor's `Account<'info, T>` type automatically validates the discriminator (first 8 bytes of account data) on deserialization, which is an additional guard against passing the wrong account type

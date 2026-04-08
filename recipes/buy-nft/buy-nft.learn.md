@@ -85,11 +85,9 @@ EIP-2981 is informational — it says "here's how much royalty is owed." Enforce
 
 ```json
 {
-  "seller_fee_basis_points": 500,  // 5% royalty
+  "seller_fee_basis_points": 500, // 5% royalty
   "properties": {
-    "creators": [
-      { "address": "CreatorWallet...", "share": 100 }
-    ]
+    "creators": [{ "address": "CreatorWallet...", "share": 100 }]
   }
 }
 ```
@@ -114,11 +112,11 @@ The NFT physically sits in an escrow token account between listing and sale. Thi
 
 Beyond fixed-price sales, common auction types:
 
-| Type | How it works | Example |
-|---|---|---|
-| **English (ascending)** | Bids increase, highest wins at deadline | eBay style |
-| **Dutch (descending)** | Price drops over time, first buyer wins | Art Blocks |
-| **Reserve price** | Sale only happens if minimum bid met | Most NFT auctions |
-| **FCFS (fixed price)** | First come, first served | Mint events |
+| Type                    | How it works                            | Example           |
+| ----------------------- | --------------------------------------- | ----------------- |
+| **English (ascending)** | Bids increase, highest wins at deadline | eBay style        |
+| **Dutch (descending)**  | Price drops over time, first buyer wins | Art Blocks        |
+| **Reserve price**       | Sale only happens if minimum bid met    | Most NFT auctions |
+| **FCFS (fixed price)**  | First come, first served                | Mint events       |
 
 Each requires different smart contract logic, but all build on the same approve/transfer primitives.

@@ -3,6 +3,7 @@
 ## EVM: A world of chains
 
 The EVM ecosystem has dozens of chains: Ethereum, Arbitrum, Base, Optimism, Polygon, BSC, Avalanche, and more. Each is an independent blockchain with its own:
+
 - **Chain ID** — a unique number (Ethereum = 1, Arbitrum = 42161, Base = 8453)
 - **Native token** — ETH, MATIC, AVAX, BNB
 - **Block time** — ranging from ~1s (L2s) to ~12s (Ethereum)
@@ -45,12 +46,14 @@ On Solana, you control the cluster entirely from your app. The user can't change
 ## Chain ID vs Cluster endpoint
 
 **EVM chain IDs** are standardized and wallet-level:
+
 ```typescript
 // The wallet knows these chains
 switchChain({ chainId: 42161 }); // Arbitrum
 ```
 
 **Solana clusters** are just RPC URLs at the app level:
+
 ```typescript
 // Your app controls this
 const endpoint = clusterApiUrl("devnet");

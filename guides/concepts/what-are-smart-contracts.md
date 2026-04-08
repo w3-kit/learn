@@ -7,6 +7,7 @@ Smart contracts are programs that run on a blockchain. They execute automaticall
 ## The basic idea
 
 A smart contract is code that:
+
 1. Lives on the blockchain (immutable once deployed)
 2. Has its own address (you call it like sending a transaction)
 3. Executes deterministically (same inputs always produce same outputs)
@@ -34,12 +35,14 @@ contract MyToken {
 ```
 
 ### Key characteristics
+
 - **Stateful:** Contracts store data (balances, settings, ownership) directly on-chain
 - **Immutable:** Once deployed, the code can't be changed (unless you use a proxy pattern)
 - **Composable:** Contracts can call other contracts, enabling DeFi "money legos"
 - **Gas-metered:** Every operation costs gas, preventing infinite loops
 
 ### The contract lifecycle
+
 1. Write Solidity code
 2. Compile to EVM bytecode
 3. Deploy via a transaction (costs gas)
@@ -68,12 +71,14 @@ pub mod my_token {
 ```
 
 ### Key characteristics
+
 - **Stateless:** Programs don't store data — data lives in separate "accounts"
 - **Account model:** Everything is an account: programs, data, tokens, metadata
 - **Explicit accounts:** Every instruction declares which accounts it reads/writes
 - **Parallel execution:** Because accounts are explicit, Solana can run non-overlapping transactions in parallel
 
 ### The program lifecycle
+
 1. Write Rust code (usually with Anchor framework)
 2. Compile to BPF bytecode
 3. Deploy via a transaction
@@ -116,13 +121,15 @@ Solana:
 ## How dApps interact with contracts
 
 ### EVM
+
 ```typescript
 // Call a contract function
-const result = await contract.balanceOf(address);    // Read (free)
-const tx = await contract.transfer(to, amount);       // Write (costs gas)
+const result = await contract.balanceOf(address); // Read (free)
+const tx = await contract.transfer(to, amount); // Write (costs gas)
 ```
 
 ### Solana
+
 ```typescript
 // Send an instruction to a program
 const instruction = createTransferInstruction(from, to, owner, amount);
@@ -135,12 +142,15 @@ await sendTransaction(tx, connection);
 ## Key concepts
 
 ### Immutability
+
 Once deployed, a smart contract's code cannot be changed. This is a feature — users can trust that the rules won't change. But it means bugs are permanent.
 
 **Upgradeable contracts** (EVM: proxy pattern, Solana: upgradeable BPF loader) allow updates, but this introduces trust in the upgrade authority.
 
 ### Composability
+
 Contracts can call other contracts. This enables:
+
 - A DEX contract calling a token contract to move funds
 - A lending contract calling an oracle contract for price data
 - A yield aggregator calling multiple DeFi contracts
@@ -148,6 +158,7 @@ Contracts can call other contracts. This enables:
 This composability is why DeFi is called "money legos."
 
 ### Auditing
+
 Because contract code is on-chain and (usually) open-source, anyone can audit it. This transparency is a core property of web3 — you don't have to trust the team, you can verify the code.
 
 **But:** Most users can't read Solidity/Rust. Professional audits (Trail of Bits, OpenZeppelin, Neodyme) are the industry standard for high-value contracts.
