@@ -343,13 +343,11 @@ const deployableMintAbi = [
 function DeployAndMintSection() {
   const { address, chain } = useAccount();
   const [error, setError] = useState<string | null>(null);
+  const [deployStatus, setDeployStatus] = useState<string | null>(null);
+  const mountedRef = { current: true };
 
-  // --- Deploy state ---
   const [deployedAddress, setDeployedAddress] = useState<string | null>(null);
-  const { writeContract: deployTx, data: deployHash, isPending: isDeploying, error: deployError } = useWriteContract();
-  const { isLoading: isDeployConfirming, isSuccess: isDeployed } = useWaitForTransactionReceipt({ hash: deployHash });
 
-  // --- Mint state ---
   const [mintedTokenId, setMintedTokenId] = useState<number | null>(null);
   const { writeContract: mintTx, data: mintHash, isPending: isMinting, error: mintError } = useWriteContract();
   const { isLoading: isMintConfirming, isSuccess: isMinted } = useWaitForTransactionReceipt({ hash: mintHash });
@@ -357,40 +355,39 @@ function DeployAndMintSection() {
   const handleDeploy = async () => {
     if (!address) return;
     setError(null);
+    setDeployStatus("Submitting transaction...");
     try {
       const { DYNAMIC_SVG_NFT_BYTECODE } = await import("../lib/contract-bytecode");
-      // Deploy using a raw transaction — wagmi doesn't have useDeployContract,
-      // so we use a low-level approach via the wallet
       if (typeof window === "undefined" || !window.ethereum) throw new Error("No wallet found");
 
       const tx = await window.ethereum.request({
         method: "eth_sendTransaction",
-        params: [{
-          from: address,
-          data: DYNAMIC_SVG_NFT_BYTECODE,
-        }],
+        params: [{ from: address, data: DYNAMIC_SVG_NFT_BYTECODE }],
       });
 
-      // Wait for receipt to get contract address
-      const pollReceipt = async (hash: string, attempts = 30): Promise<string> => {
-        for (let i = 0; i < attempts; i++) {
-          const receipt = await window.ethereum!.request({
-            method: "eth_getTransactionReceipt",
-            params: [hash],
-          }) as { contractAddress?: string } | null;
-          if (receipt?.contractAddress) return receipt.contractAddress;
-          await new Promise(r => setTimeout(r, 3000));
-        }
-        throw new Error("Deploy timed out");
-      };
+      setDeployStatus("Waiting for confirmation (~15-30 seconds on Sepolia)...");
 
-      setError("Deploying... waiting for confirmation (this takes ~15-30 seconds on Sepolia)");
-      const contractAddr = await pollReceipt(tx as string);
-      setDeployedAddress(contractAddr);
-      setError(null);
+      for (let i = 0; i < 30; i++) {
+        if (!mountedRef.current) return;
+        const receipt = await window.ethereum!.request({
+          method: "eth_getTransactionReceipt",
+          params: [tx as string],
+        }) as { contractAddress?: string } | null;
+        if (receipt?.contractAddress) {
+          if (mountedRef.current) {
+            setDeployedAddress(receipt.contractAddress);
+            setDeployStatus(null);
+          }
+          return;
+        }
+        await new Promise(r => setTimeout(r, 3000));
+      }
+      throw new Error("Deploy timed out — check your transaction on Etherscan");
     } catch (e: unknown) {
-      const msg = e instanceof Error ? e.message : String(e);
-      if (!msg.includes("Deploying...")) setError(msg);
+      if (mountedRef.current) {
+        setError(e instanceof Error ? e.message : String(e));
+        setDeployStatus(null);
+      }
     }
   };
 
@@ -411,8 +408,7 @@ function DeployAndMintSection() {
   };
 
   const isSepolia = chain?.id === 11155111;
-  const anyError = deployError?.message || mintError?.message || error;
-  const isDeployMessage = error?.includes("Deploying...");
+  const anyError = mintError?.message || error;
 
   return (
     <Card>
@@ -441,8 +437,8 @@ function DeployAndMintSection() {
             <div className="flex flex-col gap-2">
               <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Step 1 — Deploy Contract</p>
               {!deployedAddress ? (
-                <Button onClick={handleDeploy} disabled={isDeploying}>
-                  {isDeploying ? <><Loader2 className="h-4 w-4 animate-spin" /> Deploying...</> : <><Sparkles className="h-4 w-4" /> Deploy Dynamic SVG NFT</>}
+                <Button onClick={handleDeploy} disabled={!!deployStatus}>
+                  {deployStatus ? <><Loader2 className="h-4 w-4 animate-spin" /> Deploying...</> : <><Sparkles className="h-4 w-4" /> Deploy Dynamic SVG NFT</>}
                 </Button>
               ) : (
                 <div className="flex items-center gap-2 rounded-lg p-3 text-sm" style={{ background: "rgba(16,185,129,0.08)", color: "#059669" }}>
@@ -483,15 +479,15 @@ function DeployAndMintSection() {
           </div>
         )}
 
-        {anyError && !isDeployMessage && (
+        {anyError && (
           <div className="mt-4 flex items-start gap-2 overflow-hidden rounded-lg p-3 text-sm" style={{ background: "rgba(239,68,68,0.08)", color: "#dc2626" }}>
             <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
             <p className="min-w-0 break-words">{anyError}</p>
           </div>
         )}
-        {isDeployMessage && (
+        {deployStatus && (
           <div className="mt-4 flex items-center gap-2 rounded-lg p-3 text-sm" style={{ background: "rgba(245,158,11,0.08)", color: "#d97706" }}>
-            <Loader2 className="h-4 w-4 animate-spin" /> {error}
+            <Loader2 className="h-4 w-4 animate-spin" /> {deployStatus}
           </div>
         )}
       </CardContent>

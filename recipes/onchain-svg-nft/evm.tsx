@@ -91,8 +91,8 @@ function extractSvg(metadata: NFTMetadata): string | null {
   return null;
 }
 
-// ★ Chainlink ETH/USD on Sepolia — replace with mainnet address for production
-const DEFAULT_PRICE_FEED = "0x694AA1769357215DE4FAC081bf1f309aDC325306";
+// ★ Chainlink ETH/USD on mainnet — works without wallet connection
+const DEFAULT_PRICE_FEED = "0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419";
 const PRICE_THRESHOLD = 2000_00000000n; // $2,000 with 8 decimals
 
 export function OnchainSvgNft() {
