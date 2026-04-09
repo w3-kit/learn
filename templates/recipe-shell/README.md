@@ -11,11 +11,11 @@ npm install
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+Open [http://localhost:3333](http://localhost:3333).
 
 ## What's included
 
-- **Next.js** with App Router and TypeScript (ES2020)
+- **TanStack Start** with Vite and TypeScript (matching w3-kit.com website)
 - **Tailwind CSS** with w3-kit design tokens (colors, spacing, typography)
 - **wagmi + viem** pre-configured with mainnet and Sepolia
 - **Geist font** matching the w3-kit.com website
@@ -37,13 +37,23 @@ Components are copied to `src/components/` and can be imported directly.
 
 ## Building a recipe example
 
-Edit `src/app/page.tsx`. Use `RecipeLayout` for the page shell:
+Edit `src/routes/index.tsx`. Use `RecipeLayout` for the page shell:
 
 ```tsx
-import { RecipeLayout } from "@/components/recipe-layout";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { createFileRoute } from "@tanstack/react-router";
+import { RecipeLayout } from "../components/recipe-layout";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+} from "../components/ui/card";
 
-export default function MyRecipePage() {
+export const Route = createFileRoute("/")({
+  component: MyRecipePage,
+});
+
+function MyRecipePage() {
   return (
     <RecipeLayout
       title="My Recipe"

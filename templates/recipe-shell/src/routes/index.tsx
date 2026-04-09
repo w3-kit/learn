@@ -53,12 +53,6 @@ const aggregatorV3Abi = [
     ] },
 ] as const;
 
-const dynamicNftMintAbi = [
-  { name: "safeMint", type: "function", stateMutability: "nonpayable",
-    inputs: [{ name: "to", type: "address" }, { name: "tokenId", type: "uint256" }],
-    outputs: [] },
-] as const;
-
 // --- Helpers ---
 
 type NFTMetadata = {
@@ -343,6 +337,8 @@ const deployableMintAbi = [
 function DeployAndMintSection() {
   const { address, chain } = useAccount();
   const [error, setError] = useState<string | null>(null);
+  const [deployStatus, setDeployStatus] = useState<string | null>(null);
+  const mountedRef = { current: true };
 
   // --- Deploy state ---
   const [deployedAddress, setDeployedAddress] = useState<string | null>(null);
@@ -357,40 +353,40 @@ function DeployAndMintSection() {
   const handleDeploy = async () => {
     if (!address) return;
     setError(null);
+    setDeployStatus("Submitting transaction...");
     try {
       const { DYNAMIC_SVG_NFT_BYTECODE } = await import("../lib/contract-bytecode");
-      // Deploy using a raw transaction — wagmi doesn't have useDeployContract,
-      // so we use a low-level approach via the wallet
       if (typeof window === "undefined" || !window.ethereum) throw new Error("No wallet found");
 
       const tx = await window.ethereum.request({
         method: "eth_sendTransaction",
-        params: [{
-          from: address,
-          data: DYNAMIC_SVG_NFT_BYTECODE,
-        }],
+        params: [{ from: address, data: DYNAMIC_SVG_NFT_BYTECODE }],
       });
 
-      // Wait for receipt to get contract address
-      const pollReceipt = async (hash: string, attempts = 30): Promise<string> => {
-        for (let i = 0; i < attempts; i++) {
-          const receipt = await window.ethereum!.request({
-            method: "eth_getTransactionReceipt",
-            params: [hash],
-          }) as { contractAddress?: string } | null;
-          if (receipt?.contractAddress) return receipt.contractAddress;
-          await new Promise(r => setTimeout(r, 3000));
-        }
-        throw new Error("Deploy timed out");
-      };
+      setDeployStatus("Waiting for confirmation (~15-30 seconds on Sepolia)...");
 
-      setError("Deploying... waiting for confirmation (this takes ~15-30 seconds on Sepolia)");
-      const contractAddr = await pollReceipt(tx as string);
-      setDeployedAddress(contractAddr);
-      setError(null);
+      // Poll for receipt — stops if component unmounts
+      for (let i = 0; i < 30; i++) {
+        if (!mountedRef.current) return;
+        const receipt = await window.ethereum!.request({
+          method: "eth_getTransactionReceipt",
+          params: [tx as string],
+        }) as { contractAddress?: string } | null;
+        if (receipt?.contractAddress) {
+          if (mountedRef.current) {
+            setDeployedAddress(receipt.contractAddress);
+            setDeployStatus(null);
+          }
+          return;
+        }
+        await new Promise(r => setTimeout(r, 3000));
+      }
+      throw new Error("Deploy timed out — check your transaction on Etherscan");
     } catch (e: unknown) {
-      const msg = e instanceof Error ? e.message : String(e);
-      if (!msg.includes("Deploying...")) setError(msg);
+      if (mountedRef.current) {
+        setError(e instanceof Error ? e.message : String(e));
+        setDeployStatus(null);
+      }
     }
   };
 
@@ -404,6 +400,7 @@ function DeployAndMintSection() {
         functionName: "safeMint",
         args: [address],
       });
+      // Estimated token ID — contract auto-increments from 0
       setMintedTokenId((prev) => (prev ?? -1) + 1);
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : String(e));
@@ -412,7 +409,6 @@ function DeployAndMintSection() {
 
   const isSepolia = chain?.id === 11155111;
   const anyError = deployError?.message || mintError?.message || error;
-  const isDeployMessage = error?.includes("Deploying...");
 
   return (
     <Card>
@@ -483,15 +479,15 @@ function DeployAndMintSection() {
           </div>
         )}
 
-        {anyError && !isDeployMessage && (
+        {anyError && (
           <div className="mt-4 flex items-start gap-2 overflow-hidden rounded-lg p-3 text-sm" style={{ background: "rgba(239,68,68,0.08)", color: "#dc2626" }}>
             <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
             <p className="min-w-0 break-words">{anyError}</p>
           </div>
         )}
-        {isDeployMessage && (
+        {deployStatus && (
           <div className="mt-4 flex items-center gap-2 rounded-lg p-3 text-sm" style={{ background: "rgba(245,158,11,0.08)", color: "#d97706" }}>
-            <Loader2 className="h-4 w-4 animate-spin" /> {error}
+            <Loader2 className="h-4 w-4 animate-spin" /> {deployStatus}
           </div>
         )}
       </CardContent>
