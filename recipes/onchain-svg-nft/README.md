@@ -30,6 +30,11 @@ On-chain SVG generation via `abi.encodePacked` inside `tokenURI()` is an EVM-spe
 - **Price feed staleness** — check `updatedAt` from Chainlink; stale data (> 1 hour old) may indicate a feed issue
 - **Contract verification** — verify the NFT contract on Etherscan before interacting; a malicious `tokenURI` could return crafted payloads
 
+## Prerequisites
+
+- `npm install wagmi viem @tanstack/react-query`
+- TypeScript target must be `ES2020` or higher (for BigInt literals). In `tsconfig.json`: `"target": "ES2020"`
+
 ## Files
 
 - `evm.tsx` — Main component: decode on-chain SVG, read Chainlink price, mint dynamic NFT
