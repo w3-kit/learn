@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   usePublicClient,
   useAccount,
@@ -103,8 +103,10 @@ export function OnchainSvgNft() {
   const [contractAddress, setContractAddress] = useState("");
   const [tokenId, setTokenId] = useState("");
   const [metadata, setMetadata] = useState<NFTMetadata | null>(null);
-  const [svgContent, setSvgContent] = useState<string | null>(null);
   const [rawUri, setRawUri] = useState<string | null>(null);
+
+  // ★ Derive SVG content from metadata instead of storing as separate state
+  const svgContent = useMemo(() => (metadata ? extractSvg(metadata) : null), [metadata]);
   const [isFetching, setIsFetching] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -116,7 +118,7 @@ export function OnchainSvgNft() {
     address: priceFeedAddress as `0x${string}`,
     abi: aggregatorV3Abi,
     functionName: "latestRoundData",
-    query: { refetchInterval: 30_000 },
+    query: { enabled: !!priceFeedAddress, refetchInterval: 30_000 },
   });
 
   const ethPrice = roundData ? formatUnits(roundData[1], 8) : null;
@@ -134,7 +136,6 @@ export function OnchainSvgNft() {
     setIsFetching(true);
     setError(null);
     setMetadata(null);
-    setSvgContent(null);
     setRawUri(null);
 
     try {
@@ -146,21 +147,15 @@ export function OnchainSvgNft() {
       });
       setRawUri(uri);
 
-      // Decode on-chain base64 metadata
       const decoded = decodeOnchainMetadata(uri);
       if (decoded) {
         setMetadata(decoded);
-        const svg = extractSvg(decoded);
-        if (svg) setSvgContent(svg);
         return;
       }
 
-      // Fallback: fetch off-chain metadata
       const res = await fetch(uri);
-      const json = await res.json();
-      setMetadata(json);
-      const svg = extractSvg(json);
-      if (svg) setSvgContent(svg);
+      if (!res.ok) throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+      setMetadata(await res.json());
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : String(e));
     } finally {
@@ -169,13 +164,17 @@ export function OnchainSvgNft() {
   };
 
   const handleMint = () => {
-    if (!mintContract || !mintTokenId) return;
-    writeContract({
-      address: mintContract as `0x${string}`,
-      abi: dynamicNftMintAbi,
-      functionName: "safeMint",
-      args: [(address || "0x0") as `0x${string}`, BigInt(mintTokenId)],
-    });
+    if (!mintContract || !mintTokenId || !address) return;
+    try {
+      writeContract({
+        address: mintContract as `0x${string}`,
+        abi: dynamicNftMintAbi,
+        functionName: "safeMint",
+        args: [address, BigInt(mintTokenId)],
+      });
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : String(e));
+    }
   };
 
   return (
@@ -203,7 +202,7 @@ export function OnchainSvgNft() {
 
         {rawUri && (
           <p style={{ wordBreak: "break-all", fontSize: "0.85rem" }}>
-            URI: <code>{rawUri.slice(0, 80)}...</code>
+            URI: <code>{rawUri.length > 80 ? `${rawUri.slice(0, 80)}...` : rawUri}</code>
           </p>
         )}
 
@@ -269,7 +268,7 @@ export function OnchainSvgNft() {
           placeholder="Token ID to mint"
           style={{ display: "block", marginBottom: "0.5rem", width: "100%" }}
         />
-        <button onClick={handleMint} disabled={isPending || !mintContract || !mintTokenId}>
+        <button onClick={handleMint} disabled={isPending || !mintContract || !mintTokenId || !address}>
           {isPending ? "Minting..." : "Mint NFT"}
         </button>
         {isConfirming && <p>Waiting for confirmation...</p>}

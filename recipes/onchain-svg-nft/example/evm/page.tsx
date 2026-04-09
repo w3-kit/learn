@@ -14,7 +14,7 @@ import {
 import { mainnet, sepolia } from "wagmi/chains";
 import { injected } from "wagmi/connectors";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { formatUnits } from "viem";
 
 const config = createConfig({
@@ -117,8 +117,9 @@ function OnchainSvgNftUI() {
   const [contractAddress, setContractAddress] = useState(DEFAULT_NFT_CONTRACT);
   const [tokenId, setTokenId] = useState("1");
   const [metadata, setMetadata] = useState<NFTMetadata | null>(null);
-  const [svgContent, setSvgContent] = useState<string | null>(null);
   const [rawUri, setRawUri] = useState<string | null>(null);
+
+  const svgContent = useMemo(() => (metadata ? extractSvg(metadata) : null), [metadata]);
   const [isFetching, setIsFetching] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -128,7 +129,7 @@ function OnchainSvgNftUI() {
     address: priceFeedAddress as `0x${string}`,
     abi: aggregatorV3Abi,
     functionName: "latestRoundData",
-    query: { refetchInterval: 30_000 },
+    query: { enabled: !!priceFeedAddress, refetchInterval: 30_000 },
   });
 
   const ethPrice = roundData ? formatUnits(roundData[1], 8) : null;
@@ -161,7 +162,6 @@ function OnchainSvgNftUI() {
     setIsFetching(true);
     setError(null);
     setMetadata(null);
-    setSvgContent(null);
     setRawUri(null);
     try {
       const uri = await client.readContract({
@@ -175,16 +175,12 @@ function OnchainSvgNftUI() {
       const decoded = decodeOnchainMetadata(uri);
       if (decoded) {
         setMetadata(decoded);
-        const svg = extractSvg(decoded);
-        if (svg) setSvgContent(svg);
         return;
       }
 
       const res = await fetch(uri);
-      const json = await res.json();
-      setMetadata(json);
-      const svg = extractSvg(json);
-      if (svg) setSvgContent(svg);
+      if (!res.ok) throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+      setMetadata(await res.json());
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : String(e));
     } finally {
@@ -193,13 +189,17 @@ function OnchainSvgNftUI() {
   };
 
   const handleMint = () => {
-    if (!mintContract || !mintTokenId) return;
-    writeContract({
-      address: mintContract as `0x${string}`,
-      abi: dynamicNftMintAbi,
-      functionName: "safeMint",
-      args: [(address || "0x0") as `0x${string}`, BigInt(mintTokenId)],
-    });
+    if (!mintContract || !mintTokenId || !address) return;
+    try {
+      writeContract({
+        address: mintContract as `0x${string}`,
+        abi: dynamicNftMintAbi,
+        functionName: "safeMint",
+        args: [address, BigInt(mintTokenId)],
+      });
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : String(e));
+    }
   };
 
   return (
@@ -235,7 +235,7 @@ function OnchainSvgNftUI() {
 
         {rawUri && (
           <p style={{ marginTop: "1rem", wordBreak: "break-all" }}>
-            URI: <code style={{ fontSize: "0.75rem" }}>{rawUri.slice(0, 80)}...</code>
+            URI: <code style={{ fontSize: "0.75rem" }}>{rawUri.length > 80 ? `${rawUri.slice(0, 80)}...` : rawUri}</code>
           </p>
         )}
 
@@ -308,7 +308,7 @@ function OnchainSvgNftUI() {
           />
           <button
             onClick={handleMint}
-            disabled={isPending || !mintContract || !mintTokenId}
+            disabled={isPending || !mintContract || !mintTokenId || !address}
             style={{ padding: "0.5rem 1rem", cursor: "pointer" }}
           >
             {isPending ? "Minting..." : "Mint NFT"}
