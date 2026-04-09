@@ -1,0 +1,8 @@
+{
+  "name": "onchain-svg-nft",
+  "description": "Decode on-chain SVG NFTs, render base64 tokenURI metadata, and interact with dynamic NFTs that react to Chainlink price feeds.",
+  "chains": ["evm"],
+  "dependencies": {
+    "evm": ["viem"]
+  }
+}

@@ -25,6 +25,7 @@ Copy-paste code snippets for common web3 tasks. Each recipe has EVM and Solana i
 | fetch-nft-collection | NFTs     |
 | buy-nft              | NFTs     |
 | display-nft-metadata | NFTs     |
+| onchain-svg-nft      | NFTs     |
 | swap-tokens          | DeFi     |
 | provide-liquidity    | DeFi     |
 | stake-tokens         | DeFi     |
