@@ -30,12 +30,24 @@ On-chain SVG generation via `abi.encodePacked` inside `tokenURI()` is an EVM-spe
 - **Price feed staleness** — check `updatedAt` from Chainlink; stale data (> 1 hour old) may indicate a feed issue
 - **Contract verification** — verify the NFT contract on Etherscan before interacting; a malicious `tokenURI` could return crafted payloads
 
-## Prerequisites
+## Run the showcase
 
-- `npm install wagmi viem @tanstack/react-query`
-- TypeScript target must be `ES2020` or higher (for BigInt literals). In `tsconfig.json`: `"target": "ES2020"`
+```bash
+cd recipes/onchain-svg-nft/example
+npm install
+npm run dev
+```
+
+Open http://localhost:3333 — built on the `templates/recipe-shell/` with w3-kit design system and components.
+
+Features:
+
+- **Read On-chain SVG** — fetches Loot NFTs from mainnet, renders SVG + w3-kit NFTCard
+- **Chainlink Price Feed** — live ETH/USD via w3-kit PriceTicker
+- **Deploy & Mint** — deploy a DynamicSvgNft contract on Sepolia, mint, read back
 
 ## Files
 
-- `evm.tsx` — Main component: decode on-chain SVG, read Chainlink price, mint dynamic NFT
-- `example/evm/page.tsx` — Runnable Next.js example with full provider setup
+- `evm.tsx` — Reusable component: decode on-chain SVG, read Chainlink price, mint
+- `example/` — Showcase app (TanStack Start + w3-kit design system)
+- `onchain-svg-nft.learn.md` — Educational deep-dive (~2500 words)
