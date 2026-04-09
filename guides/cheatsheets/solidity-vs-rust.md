@@ -373,30 +373,46 @@ function transfer(address to, uint256 amount) public returns (bool) {
 }
 ```
 
-**Rust (SPL Token):**
+**Rust (SPL Token via CPI):**
 
 ```rust
-pub fn transfer(
-    ctx: Context<Transfer>,
+use anchor_spl::token::{self, Token, TokenAccount, Transfer};
+
+pub fn transfer_tokens(
+    ctx: Context<TransferTokens>,
     amount: u64,
 ) -> Result<()> {
-    require!(amount > 0, "Amount must be greater than zero");
+    require!(amount > 0, TokenError::InvalidAmount);
 
-    let mut from_account = ctx.accounts.from_token_account.load_mut()?;
-    let mut to_account = ctx.accounts.to_token_account.load_mut()?;
-
-    require!(from_account.amount >= amount, "Insufficient balance");
-
-    from_account.amount -= amount;
-    to_account.amount += amount;
+    token::transfer(
+        CpiContext::new(
+            ctx.accounts.token_program.to_account_info(),
+            Transfer {
+                from: ctx.accounts.from.to_account_info(),
+                to: ctx.accounts.to.to_account_info(),
+                authority: ctx.accounts.authority.to_account_info(),
+            },
+        ),
+        amount,
+    )?;
 
     emit!(TransferEvent {
-        from: ctx.accounts.from_token_account.key(),
-        to: ctx.accounts.to_token_account.key(),
+        from: ctx.accounts.from.key(),
+        to: ctx.accounts.to.key(),
         amount,
     });
 
     Ok(())
+}
+
+#[derive(Accounts)]
+pub struct TransferTokens<'info> {
+    #[account(mut)]
+    pub from: Account<'info, TokenAccount>,
+    #[account(mut)]
+    pub to: Account<'info, TokenAccount>,
+    pub authority: Signer<'info>,
+    pub token_program: Program<'info, Token>,
 }
 ```
 
@@ -417,12 +433,8 @@ uint256 myBalance = token.balanceOf(msg.sender);
 
 ```rust
 pub fn get_balance(ctx: Context<GetBalance>) -> Result<u64> {
-    let account = &ctx.accounts.token_account.load()?;
-    Ok(account.amount)
+    Ok(ctx.accounts.token_account.amount)
 }
-
-// Usage
-let balance = get_balance(&client, token_account)?;
 ```
 
 ### Approval & TransferFrom
@@ -453,36 +465,46 @@ function transferFrom(
 }
 ```
 
-**Rust:**
+**Rust (SPL Token via CPI):**
 
 ```rust
-pub fn approve(
-    ctx: Context<Approve>,
+use anchor_spl::token::{self, Approve, Token, TokenAccount, Transfer};
+
+pub fn approve_delegate(
+    ctx: Context<ApproveDelegate>,
     amount: u64,
 ) -> Result<()> {
-    let delegate = &mut ctx.accounts.delegate;
-    delegate.delegated_amount = amount;
-
-    emit!(ApprovalEvent {
-        owner: ctx.accounts.owner.key(),
-        spender: ctx.accounts.spender.key(),
+    token::approve(
+        CpiContext::new(
+            ctx.accounts.token_program.to_account_info(),
+            Approve {
+                to: ctx.accounts.token_account.to_account_info(),
+                delegate: ctx.accounts.delegate.to_account_info(),
+                authority: ctx.accounts.owner.to_account_info(),
+            },
+        ),
         amount,
-    });
+    )?;
 
     Ok(())
 }
 
-pub fn transfer_from(
-    ctx: Context<TransferFrom>,
+pub fn delegated_transfer(
+    ctx: Context<DelegatedTransfer>,
     amount: u64,
 ) -> Result<()> {
-    require!(
-        ctx.accounts.delegate.delegated_amount >= amount,
-        "Allowance exceeded"
-    );
-
-    // Perform transfer
-    ctx.accounts.delegate.delegated_amount -= amount;
+    // The delegate (spender) is the signer, transferring from the owner's account
+    token::transfer(
+        CpiContext::new(
+            ctx.accounts.token_program.to_account_info(),
+            Transfer {
+                from: ctx.accounts.from.to_account_info(),
+                to: ctx.accounts.to.to_account_info(),
+                authority: ctx.accounts.delegate.to_account_info(),
+            },
+        ),
+        amount,
+    )?;
 
     Ok(())
 }
@@ -624,7 +646,7 @@ describe("my_program", () => {
 
 | Task                  | Solidity                   | Rust                           |
 | --------------------- | -------------------------- | ------------------------------ |
-| **Check balance**     | `balances[addr]`           | `account.load()?.amount`       |
+| **Check balance**     | `balances[addr]`           | `account.amount`               |
 | **Transfer**          | `balances[from] -= amount` | Modify account state           |
 | **Emit event**        | `emit Transfer(...)`       | `emit!(Event {...})`           |
 | **Require condition** | `require(cond, msg)`       | `require!(cond, err_msg)`      |
