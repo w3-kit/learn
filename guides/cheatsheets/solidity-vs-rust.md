@@ -2,6 +2,8 @@
 
 This guide compares smart contract syntax and patterns between Solidity and Rust.
 
+Rust examples in this guide target Anchor on Solana unless explicitly labeled as Native Solana.
+
 ---
 
 ## Table of Contents
@@ -60,12 +62,33 @@ mapping(address => uint256) public userBalances;
 mapping(address => mapping(address => uint256)) public allowances;
 ```
 
-**Rust - Vectors & HashMaps:**
+**Rust - Vectors (in-memory) & PDA Accounts (mapping equivalent):**
 
 ```rust
+// In-memory collection inside a single instruction (not persistent state)
 let mut balances: Vec<u64> = Vec::new();
-let mut user_balances: HashMap<Pubkey, u64> = HashMap::new();
-let mut allowances: HashMap<Pubkey, HashMap<Pubkey, u64>> = HashMap::new();
+
+// Mapping-like persistent state on Solana uses PDA-derived accounts.
+#[account]
+pub struct UserBalance {
+    pub owner: Pubkey,
+    pub balance: u64,
+}
+
+#[derive(Accounts)]
+pub struct UpsertUserBalance<'info> {
+    #[account(
+        init_if_needed,
+        payer = signer,
+        space = 8 + 32 + 8,
+        seeds = [b"user-balance", signer.key().as_ref()],
+        bump
+    )]
+    pub user_balance: Account<'info, UserBalance>,
+    #[account(mut)]
+    pub signer: Signer<'info>,
+    pub system_program: Program<'info, System>,
+}
 ```
 
 ---
@@ -96,34 +119,48 @@ function _validateAmount(uint256 amount) internal pure {
 }
 ```
 
-**Rust (Solana Program):**
+**Rust (Anchor on Solana):**
 
 ```rust
-// Instruction handler
-pub fn transfer(
-    program_id: &Pubkey,
-    accounts: &[AccountInfo],
-    instruction_data: &[u8],
-) -> ProgramResult {
-    let from = &accounts[0];
-    let to = &accounts[1];
+pub fn transfer_sol(ctx: Context<TransferSol>, amount: u64) -> Result<()> {
+    require!(amount > 0, CustomError::InvalidAmount);
 
-    require!(from.is_signer, "From account must sign");
+    let from = &ctx.accounts.from;
+    let to = &ctx.accounts.to;
 
-    // Transfer logic
-    let mut from_balance = from.try_borrow_mut_data()?;
-    let mut to_balance = to.try_borrow_mut_data()?;
+    require!(
+        **from.to_account_info().lamports.borrow() >= amount,
+        CustomError::InsufficientBalance
+    );
 
-    // Perform transfer
+    **from.to_account_info().try_borrow_mut_lamports()? -= amount;
+    **to.to_account_info().try_borrow_mut_lamports()? += amount;
+
     Ok(())
 }
 
+#[derive(Accounts)]
+pub struct TransferSol<'info> {
+    #[account(mut)]
+    pub from: Signer<'info>,
+    #[account(mut)]
+    pub to: SystemAccount<'info>,
+}
+
 // Helper function
-fn validate_amount(amount: u64) -> Result<(), ProgramError> {
+fn validate_amount(amount: u64) -> Result<()> {
     if amount == 0 {
-        return Err(ProgramError::InvalidArgument);
+        return err!(CustomError::InvalidAmount);
     }
     Ok(())
+}
+
+#[error_code]
+pub enum CustomError {
+    #[msg("Amount must be positive")]
+    InvalidAmount,
+    #[msg("Insufficient balance")]
+    InsufficientBalance,
 }
 ```
 
@@ -164,39 +201,33 @@ function withdraw(uint256 amount) public {
 }
 ```
 
-### Rust Error Handling
+### Rust Error Handling (Anchor)
 
 ```rust
-// Using Result type
-fn withdraw(amount: u64) -> Result<(), ProgramError> {
-    if amount > balance {
-        return Err(ProgramError::InsufficientFunds);
-    }
-    Ok(())
-}
-
 // Using custom errors
-#[derive(Debug)]
+#[error_code]
 pub enum TokenError {
+    #[msg("Insufficient balance")]
     InsufficientBalance,
+    #[msg("Amount must be positive")]
     InvalidAmount,
+    #[msg("Unauthorized")]
     Unauthorized,
 }
 
-// Using the ? operator
-fn transfer(amount: u64) -> Result<(), TokenError> {
-    validate_amount(amount)?;  // Early return on error
-    execute_transfer(amount)?;
+fn validate_amount(amount: u64) -> Result<()> {
+    require!(amount > 0, TokenError::InvalidAmount);
     Ok(())
 }
 
-// Using macros (Anchor framework)
-pub fn transfer(ctx: Context<Transfer>, amount: u64) -> Result<()> {
-    require!(amount > 0, "Amount must be positive");
-    require!(
-        ctx.accounts.from.balance >= amount,
-        "Insufficient balance"
-    );
+// Using require! and the ? operator
+pub fn withdraw(ctx: Context<Withdraw>, amount: u64) -> Result<()> {
+    validate_amount(amount)?; // Early return on error
+
+    let vault = &mut ctx.accounts.vault;
+    require!(vault.balance >= amount, TokenError::InsufficientBalance);
+
+    vault.balance -= amount;
     Ok(())
 }
 ```
@@ -225,13 +256,13 @@ function approve(address spender, uint256 amount) public {
 }
 ```
 
-### Rust Logging (Solana)
+### Rust Logging (Anchor and Native Solana)
 
 ```rust
-// Using msg! macro
+// Native Solana logging
 msg!("Transfer initiated from {:?} to {:?}", from, to);
 
-// Emitting events with anchor
+// Anchor events
 #[event]
 pub struct TransferEvent {
     pub from: Pubkey,
@@ -315,12 +346,12 @@ let (vault_pda, bump) = Pubkey::find_program_address(
 
 ### Storage Cost Comparison
 
-| Aspect               | Solidity                        | Rust (Solana)                      |
-| -------------------- | ------------------------------- | ---------------------------------- |
-| **Cost Model**       | Gas per operation               | Rent (storage) + Compute           |
-| **Storage Payment**  | One-time deployment             | Annual rent (recovered on closure) |
-| **Data Persistence** | Permanent (contract owner pays) | Rent-based (account owner pays)    |
-| **Mutable State**    | Implicit in contract            | Must pass as mutable account       |
+| Aspect               | Solidity                           | Rust (Solana)                                              |
+| -------------------- | ---------------------------------- | ---------------------------------------------------------- |
+| **Cost Model**       | Gas per operation                  | Compute + account storage allocation                       |
+| **Storage Payment**  | One-time deployment                | One-time rent-exempt deposit (refundable on account close) |
+| **Data Persistence** | Permanent (contract owner pays)    | Persistent while account stays allocated                   |
+| **Mutable State**    | Implicit in contract storage slots | Must pass writable accounts                                |
 
 ---
 
@@ -547,45 +578,45 @@ solana config set --url devnet
 anchor deploy
 ```
 
-**Example Test:**
+**Example Test (TypeScript/Mocha, standard Anchor flow):**
 
-```rust
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use anchor_lang::prelude::*;
+```typescript
+import * as anchor from "@coral-xyz/anchor";
+import { Program } from "@coral-xyz/anchor";
+import { expect } from "chai";
+import { MyProgram } from "../target/types/my_program";
 
-    #[tokio::test]
-    async fn test_transfer() {
-        let program = anchor_lang::prelude::Program::new(
-            Id,
-            anchor_client::Client::new(
-                anchor_client::Cluster::Localnet,
-                Rc::new(anchor_client::Wallet::new(
-                    std::fs::read(
-                        &shellexpand::tilde("~/.config/solana/id.json")
-                    )?,
-                )?),
-                anchor_client::RequestBuilder::default(),
-            ),
-        );
+describe("my_program", () => {
+  const provider = anchor.AnchorProvider.env();
+  anchor.setProvider(provider);
 
-        // Test logic here
-    }
-}
+  const program = anchor.workspace.MyProgram as Program<MyProgram>;
+
+  it("executes transfer instruction", async () => {
+    const tx = await program.methods
+      .transfer(new anchor.BN(100))
+      .accounts({
+        from: provider.wallet.publicKey,
+        to: provider.wallet.publicKey,
+      })
+      .rpc();
+
+    expect(tx).to.be.a("string");
+  });
+});
 ```
 
 ### Key Deployment Differences
 
-| Aspect                  | Solidity                | Rust (Solana)                 |
-| ----------------------- | ----------------------- | ----------------------------- |
-| **Compilation**         | `solc` compiler         | `cargo build`                 |
-| **Bytecode Format**     | EVM opcodes             | SBPF (eBPF)                   |
-| **Storage**             | Contract state          | Account data                  |
-| **Upgrades**            | Proxy pattern           | CRATES (Anchor) or ASDROP     |
-| **Testing Environment** | Hardhat, Truffle        | Anchor, solana-test-validator |
-| **Local Testing**       | Hardhat node            | solana-test-validator         |
-| **Network Tokens**      | Testnet ETH from faucet | Devnet SOL from airdrop       |
+| Aspect                  | Solidity                | Rust (Solana)                                                       |
+| ----------------------- | ----------------------- | ------------------------------------------------------------------- |
+| **Compilation**         | `solc` compiler         | `cargo build`                                                       |
+| **Bytecode Format**     | EVM opcodes             | SBF (eBPF-derived)                                                  |
+| **Storage**             | Contract state          | Account data                                                        |
+| **Upgrades**            | Proxy pattern           | Native upgrade authority (BPF Loader Upgradeable), `anchor upgrade` |
+| **Testing Environment** | Hardhat, Truffle        | Anchor, solana-test-validator, Surfpool                             |
+| **Local Testing**       | Hardhat node            | solana-test-validator, Surfpool                                     |
+| **Network Tokens**      | Testnet ETH from faucet | Devnet SOL from airdrop                                             |
 
 ---
 
@@ -608,7 +639,10 @@ mod tests {
 
 - [Solidity Documentation](https://docs.soliditylang.org/)
 - [Rust Documentation](https://doc.rust-lang.org/)
-- [Anchor Framework](https://www.anchor-lang.com/)
-- [Solana Documentation](https://docs.solana.com/)
+- [Anchor Errors (require!, custom errors)](https://www.anchor-lang.com/docs/features/errors)
+- [Anchor Account Constraints](https://www.anchor-lang.com/docs/references/account-constraints)
+- [Solana Accounts](https://solana.com/docs/core/accounts)
+- [Solana Program Deployment and Upgrades](https://solana.com/docs/programs/deploying)
+- [Solana Documentation](https://solana.com/docs)
 - [ERC-20 Standard](https://ethereum.org/en/developers/docs/standards/tokens/erc-20/)
-- [SPL Token Documentation](https://spl.solana.com/token)
+- [SPL Token Program](https://www.solana-program.com/docs/token)
