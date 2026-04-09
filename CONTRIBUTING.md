@@ -16,13 +16,22 @@ Create a new directory in `recipes/`:
 
 ```
 recipes/your-recipe/
-├── evm/           # EVM implementation
-│   └── index.ts
-├── solana/        # Solana implementation (optional)
-│   └── index.ts
-├── meta.json      # CLI metadata
-└── .learn.md      # Educational explanation
+├── evm.tsx                    # EVM implementation (wagmi + viem)
+├── solana.tsx                 # Solana implementation (optional)
+├── meta.json                  # CLI metadata
+├── README.md                  # Overview (200-400 words)
+├── your-recipe.learn.md       # Educational deep-dive (2000+ words)
+└── example/
+    └── evm/
+        └── page.tsx           # Self-contained runnable example
 ```
+
+### Recipe file details
+
+- **`evm.tsx`** — Reusable React component using wagmi hooks. Start with `"use client"`, use full TypeScript types, mark important sections with `★` comments.
+- **`README.md`** — Overview with comparison table, security notes, and file list.
+- **`{recipe-name}.learn.md`** — Educational content explaining the concepts, not just the API. Include code examples, diagrams, and external references.
+- **`example/evm/page.tsx`** — Self-contained page that works with the recipe shell template (see below).
 
 ### meta.json format
 
@@ -30,13 +39,37 @@ recipes/your-recipe/
 {
   "name": "your-recipe",
   "description": "What this recipe does",
-  "category": "wallet|tokens|nfts|defi|utils",
-  "chains": ["evm", "solana"],
+  "chains": ["evm"],
   "dependencies": {
-    "evm": { "viem": "^2.0.0" },
-    "solana": { "@solana/web3.js": "^1.0.0" }
+    "evm": ["viem"]
   }
 }
+```
+
+### Building showcase-quality examples
+
+Use the **recipe shell template** at `templates/recipe-shell/` for polished examples:
+
+```bash
+cp -r templates/recipe-shell my-recipe-example
+cd my-recipe-example
+npm install
+npm run dev
+```
+
+The template includes:
+
+- **TanStack Start** with Vite (matching the w3-kit.com website)
+- **w3-kit design system** — same CSS tokens, colors, and typography as the website
+- **wagmi + viem** pre-configured with mainnet and Sepolia RPCs
+- **UI primitives** — Button, Card, Input, Badge from w3-kit
+- **Dark mode** toggle and wallet connection
+- **RecipeLayout** component for consistent page structure
+
+Add w3-kit components to your example:
+
+```bash
+npx w3-kit add nft-card price-ticker connect-wallet
 ```
 
 ## Adding a guide
@@ -66,13 +99,12 @@ npm install
 npm run format:check
 ```
 
-No build step — this repo is content-only. The CI only checks markdown formatting.
-
 ## Guidelines
 
 - Keep code simple and well-commented — this is educational content
 - Include both EVM and Solana implementations where possible
 - Every recipe needs a `.learn.md` explaining the concepts
+- Use the recipe shell template for showcase-quality examples
 - Test your code before submitting
 
 Check [open issues](https://github.com/w3-kit/learn/issues) for ideas.
